@@ -206,18 +206,18 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 	 * code makes the following assumptions:
 	 *     - If the BOX3D is a single point then return a
 	 *     POINT geometry
-	 *     - If the BOX3D represents either a horizontal or
-	 *     vertical line, return a LINESTRING geometry
+	 *     - If the BOX3D represents a line in any of X, Y
+	 *     or Z dimension, return a LINESTRING geometry
 	 *     - Otherwise return a POLYGON
 	 */
-
-	pa = ptarray_construct_empty(0, 0, 10);
-	FLAGS_SET_Z(pa->flags, 1);
 
 	if ( (box->xmin == box->xmax) && (box->ymin == box->ymax) &&
 			(box->zmin == box->zmax) )
 	{
-		LWPOINT *lwpt = lwpoint_construct(SRID_UNKNOWN, NULL, pa);
+		LWPOINT *lwpt;
+		pa = ptarray_construct_empty(1, 0, 1);
+		FLAGS_SET_Z(pa->flags, 1);
+		lwpt = lwpoint_construct(SRID_UNKNOWN, NULL, pa);
 
 		pt.x = box->xmin;
 		pt.y = box->ymin;
@@ -226,11 +226,20 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 
 		result = geometry_serialize(lwpoint_as_lwgeom(lwpt));
 	}
-	else if ((box->xmin == box->xmax ||
-	         box->ymin == box->ymax) &&
-			 box->zmin == box->zmax)
+	else if (((box->xmin == box->xmax ||
+			   box->ymin == box->ymax) &&
+			   box->zmin == box->zmax) ||
+		     ((box->xmin == box->xmax ||
+			   box->zmin == box->zmax) &&
+			   box->ymin == box->ymax) ||
+		     ((box->ymin == box->ymax ||
+			   box->zmin == box->zmax) &&
+			   box->xmin == box->xmax))
 	{
-		LWLINE *lwline = lwline_construct(SRID_UNKNOWN, NULL, pa);
+		LWLINE *lwline;
+		pa = ptarray_construct_empty(1, 0, 2);
+		FLAGS_SET_Z(pa->flags, 1);
+		lwline = lwline_construct(SRID_UNKNOWN, NULL, pa);
 
 		pt.x = box->xmin;
 		pt.y = box->ymin;
@@ -243,31 +252,18 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 
 		result = geometry_serialize(lwline_as_lwgeom(lwline));
 	}
-	else
+	else if (box->xmin == box->xmax)
 	{
-		LWPOLY *lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
+		LWPOLY *lwpoly;
+		pa = ptarray_construct_empty(1, 0, 5);
+		FLAGS_SET_Z(pa->flags, 1);
+		lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
 
 		pt.x = box->xmin;
 		pt.y = box->ymin;
 		pt.z = box->zmin;
 		ptarray_append_point(pa, &pt, LW_TRUE);
 		pt.x = box->xmin;
-		pt.y = box->ymax;
-		pt.z = box->zmin;
-		ptarray_append_point(pa, &pt, LW_TRUE);
-		pt.x = box->xmax;
-		pt.y = box->ymax;
-		pt.z = box->zmin;
-		ptarray_append_point(pa, &pt, LW_TRUE);
-		pt.x = box->xmax;
-		pt.y = box->ymin;
-		pt.z = box->zmin;
-		ptarray_append_point(pa, &pt, LW_TRUE);
-		pt.x = box->xmin;
-		pt.y = box->ymin;
-		pt.z = box->zmin;
-		ptarray_append_point(pa, &pt, LW_TRUE);
-		pt.x = box->xmin;
 		pt.y = box->ymin;
 		pt.z = box->zmax;
 		ptarray_append_point(pa, &pt, LW_TRUE);
@@ -275,21 +271,130 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 		pt.y = box->ymax;
 		pt.z = box->zmax;
 		ptarray_append_point(pa, &pt, LW_TRUE);
-		pt.x = box->xmax;
+		pt.x = box->xmin;
 		pt.y = box->ymax;
-		pt.z = box->zmax;
-		ptarray_append_point(pa, &pt, LW_TRUE);
-		pt.x = box->xmax;
-		pt.y = box->ymin;
-		pt.z = box->zmax;
+		pt.z = box->zmin;
 		ptarray_append_point(pa, &pt, LW_TRUE);
 		pt.x = box->xmin;
 		pt.y = box->ymin;
-		pt.z = box->zmax;
+		pt.z = box->zmin;
 		ptarray_append_point(pa, &pt, LW_TRUE);
 
 		result = geometry_serialize(lwpoly_as_lwgeom(lwpoly));
-		
+	}
+	else if (box->ymin == box->ymax)
+	{
+		LWPOLY *lwpoly;
+		pa = ptarray_construct_empty(1, 0, 5);
+		FLAGS_SET_Z(pa->flags, 1);
+		lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
+
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmax;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmax;
+		pt.y = box->ymin;
+		pt.z = box->zmax;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmax;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+
+		result = geometry_serialize(lwpoly_as_lwgeom(lwpoly));
+	}
+	else if (box->zmin == box->zmax)
+	{
+		LWPOLY *lwpoly;
+		pa = ptarray_construct_empty(1, 0, 5);
+		FLAGS_SET_Z(pa->flags, 1);
+		lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
+
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymax;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmax;
+		pt.y = box->ymax;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmax;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+
+		result = geometry_serialize(lwpoly_as_lwgeom(lwpoly));
+	}
+	else
+	{
+		LWPOLY *lwpoly;
+		pa = ptarray_construct_empty(1, 0, 11);
+		FLAGS_SET_Z(pa->flags, 1);
+		lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
+
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymax;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmax;
+		pt.y = box->ymax;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmax;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmax;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymax;
+		pt.z = box->zmax;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmax;
+		pt.y = box->ymax;
+		pt.z = box->zmax;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmax;
+		pt.y = box->ymin;
+		pt.z = box->zmax;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmax;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+		pt.x = box->xmin;
+		pt.y = box->ymin;
+		pt.z = box->zmin;
+		ptarray_append_point(pa, &pt, LW_TRUE);
+
+		result = geometry_serialize(lwpoly_as_lwgeom(lwpoly));
 	}
 
 	gserialized_set_srid(result, box->srid);
