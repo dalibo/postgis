@@ -22,36 +22,18 @@ static int geog_counter_internal = 0;
 #endif
 
 Datum contains_box3d_geom(PG_FUNCTION_ARGS);
+Datum contains_box2d_geom(PG_FUNCTION_ARGS);
+Datum is_contained_box2d_geom(PG_FUNCTION_ARGS);
+Datum overlaps_box2d_geom(PG_FUNCTION_ARGS);
 
-static double BOX3D_xmin(BOX3D *box)
-{
-	return Min(box->xmin, box->xmax);
-}
+#define BOX_xmin(a) (Min(a->xmin, a->xmax))
+#define BOX_xmax(a) (Max(a->xmin, a->xmax))
+#define BOX_ymin(a) (Min(a->ymin, a->ymax))
+#define BOX_ymax(a) (Max(a->ymin, a->ymax))
+#define BOX_zmin(a) (Min(a->zmin, a->zmax))
+#define BOX_zmax(a) (Max(a->zmin, a->zmax))
 
-static double BOX3D_ymin(BOX3D *box)
-{
-	return Min(box->ymin, box->ymax);
-}
 
-static double BOX3D_zmin(BOX3D *box)
-{
-	return Min(box->zmin, box->zmax);
-}
-
-static double BOX3D_xmax(BOX3D *box)
-{
-	return Max(box->xmin, box->xmax);
-}
-
-static double BOX3D_ymax(BOX3D *box)
-{
-	return Max(box->ymin, box->ymax);
-}
-
-static double BOX3D_zmax(BOX3D *box)
-{
-	return Max(box->zmin, box->zmax);
-}
 
 PG_FUNCTION_INFO_V1(contains_box3d_geom);
 Datum contains_box3d_geom(PG_FUNCTION_ARGS)
@@ -62,11 +44,66 @@ Datum contains_box3d_geom(PG_FUNCTION_ARGS)
 	/* take the second argument - a geometry - and retrieve its box3d */
 	GSERIALIZED *geom = PG_GETARG_GSERIALIZED_P(1);
 	LWGEOM *lwgeom = lwgeom_from_gserialized(geom);
-	GBOX *gbox = lwgeom_get_bbox(lwgeom);
+	const GBOX *gbox = lwgeom_get_bbox(lwgeom);
 	bool result = TRUE;
-	if((BOX3D_xmin(box_a) > gbox->xmin) || (BOX3D_xmax(box_a) < gbox->xmax) ||
-			(BOX3D_ymin(box_a) > gbox->ymin) || (BOX3D_ymax(box_a) < gbox->ymax) ||
-			(BOX3D_zmin(box_a) > gbox->zmin) || (BOX3D_zmax(box_a) < gbox->zmax)){
+	if((BOX_xmin(box_a) > gbox->xmin) || (BOX_xmax(box_a) < gbox->xmax) ||
+			(BOX_ymin(box_a) > gbox->ymin) || (BOX_ymax(box_a) < gbox->ymax) ||
+			(BOX_zmin(box_a) > gbox->zmin) || (BOX_zmax(box_a) < gbox->zmax)){
+		result = FALSE;
+	}
+	lwgeom_free(lwgeom);
+	PG_RETURN_BOOL(result);
+}
+
+PG_FUNCTION_INFO_V1(contains_box2d_geom);
+Datum contains_box2d_geom(PG_FUNCTION_ARGS)
+{
+	GBOX *box_a = (GBOX *)PG_GETARG_POINTER(0);
+
+	/* take the second argument - a geometry - and retrieve its box3d */
+	GSERIALIZED *geom = PG_GETARG_GSERIALIZED_P(1);
+	LWGEOM *lwgeom = lwgeom_from_gserialized(geom);
+	const GBOX *gbox = lwgeom_get_bbox(lwgeom);
+	bool result = TRUE;
+	if((BOX_xmin(box_a) > gbox->xmin) || (BOX_xmax(box_a) < gbox->xmax) ||
+			(BOX_ymin(box_a) > gbox->ymin) || (BOX_ymax(box_a) < gbox->ymax) ||
+			(BOX_zmin(box_a) > gbox->zmin) || (BOX_zmax(box_a) < gbox->zmax)){
+		result = FALSE;
+	}
+	lwgeom_free(lwgeom);
+	PG_RETURN_BOOL(result);
+}
+
+PG_FUNCTION_INFO_V1(is_contained_box2d_geom);
+Datum is_contained_box2d_geom(PG_FUNCTION_ARGS)
+{
+	GBOX *box_a = (GBOX *)PG_GETARG_POINTER(0);
+	/* take the second argument - a geometry - and retrieve its box3d */
+	GSERIALIZED *geom = PG_GETARG_GSERIALIZED_P(1);
+	LWGEOM *lwgeom = lwgeom_from_gserialized(geom);
+	const GBOX *gbox = lwgeom_get_bbox(lwgeom);
+	bool result = TRUE;
+	if((BOX_xmin(box_a) < gbox->xmin) || (BOX_xmax(box_a) > gbox->xmax) ||
+			(BOX_ymin(box_a) < gbox->ymin) || (BOX_ymax(box_a) > gbox->ymax) ||
+			(BOX_zmin(box_a) < gbox->zmin) || (BOX_zmax(box_a) > gbox->zmax)){
+		result = FALSE;
+	}
+	lwgeom_free(lwgeom);
+	PG_RETURN_BOOL(result);
+}
+
+PG_FUNCTION_INFO_V1(overlaps_box2d_geom);
+Datum overlaps_box2d_geom(PG_FUNCTION_ARGS)
+{
+	GBOX *box_a = (GBOX *)PG_GETARG_POINTER(0);
+	/* take the second argument - a geometry - and retrieve its box3d */
+	GSERIALIZED *geom = PG_GETARG_GSERIALIZED_P(1);
+	LWGEOM *lwgeom = lwgeom_from_gserialized(geom);
+	const GBOX *gbox = lwgeom_get_bbox(lwgeom);
+	bool result = TRUE;
+	if((BOX_xmin(box_a) > gbox->xmax) || (BOX_xmax(box_a) < gbox->xmin) ||
+			(BOX_ymin(box_a) > gbox->ymax) || (BOX_ymax(box_a) < gbox->ymin) ||
+			(BOX_zmin(box_a) > gbox->zmin) || (BOX_zmax(box_a) < gbox->zmin)){
 		result = FALSE;
 	}
 	lwgeom_free(lwgeom);
