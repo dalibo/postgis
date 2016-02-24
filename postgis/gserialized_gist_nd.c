@@ -476,26 +476,6 @@ gserialized_datum_predicate(Datum gs1, Datum gs2, gidx_predicate predicate)
 	return LW_FALSE;
 }
 
-static int
-gserialized_datum_predicate_gidx_geom(GIDX *gidx1, Datum gs2, gidx_predicate predicate)
-{
-	/* Put aside some stack memory and use it for GIDX pointers. */
-	char boxmem2[GIDX_MAX_SIZE];
-	GIDX *gidx2 = (GIDX*)boxmem2;
-
-	POSTGIS_DEBUG(3, "entered function");
-
-	/* Must be able to build box for gs2 arguement (ie, not empty geometry)
-	   and predicate function to return true. */
-	if ( (gserialized_datum_get_gidx_p(gs2, gidx2) == LW_SUCCESS) &&
-	      predicate(gidx1, gidx2) )
-	{
-		POSTGIS_DEBUGF(3, "got boxes %s and %s", gidx_to_string(gidx1), gidx_to_string(gidx2));
-		return LW_TRUE;
-	}
-	return LW_FALSE;
-}
-
 /**
 * Calculate the centroid->centroid distance between the boxes.
 */
@@ -834,25 +814,6 @@ PG_FUNCTION_INFO_V1(gserialized_contains);
 Datum gserialized_contains(PG_FUNCTION_ARGS)
 {
 	if ( gserialized_datum_predicate(PG_GETARG_DATUM(0),PG_GETARG_DATUM(1), gidx_contains) == LW_TRUE )
-	{
-		PG_RETURN_BOOL(TRUE);
-	}
-
-	PG_RETURN_BOOL(FALSE);
-}
-
-PG_FUNCTION_INFO_V1(gserialized_contains_box3d_geom);
-Datum gserialized_contains_box3d_geom(PG_FUNCTION_ARGS)
-{
-	BOX3D *box = (BOX3D *)PG_GETARG_POINTER(0);
-	GBOX *gbox = box3d_to_gbox(box);
-	char boxmem2[GIDX_MAX_SIZE];
-	GIDX *gidx = (GIDX*)boxmem2;
-
-	if (gidx_from_gbox_p(*gbox, gidx) != LW_SUCCESS)
-		PG_RETURN_BOOL(FALSE);
-
-	if ( gserialized_datum_predicate_gidx_geom(gidx, PG_GETARG_DATUM(1), gidx_contains) == LW_TRUE )
 	{
 		PG_RETURN_BOOL(TRUE);
 	}

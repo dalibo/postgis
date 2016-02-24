@@ -758,11 +758,6 @@ CREATE OR REPLACE FUNCTION geometry_contains_3d(geom1 geometry, geom2 geometry)
 	AS 'MODULE_PATHNAME', 'gserialized_contains'
 	LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION geometry_contains_3d_box3d_geom(box1 box3d, geom2 geometry)
-	RETURNS bool
-	AS 'MODULE_PATHNAME', 'gserialized_contains_box3d_geom'
-	LANGUAGE 'c' IMMUTABLE STRICT;
-
 CREATE OR REPLACE FUNCTION geometry_same_3d(geom1 geometry, geom2 geometry)
 	RETURNS bool
 	AS 'MODULE_PATHNAME', 'gserialized_same'

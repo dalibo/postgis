@@ -94,6 +94,5 @@ GSERIALIZED* gserialized_set_gidx(GSERIALIZED *g, GIDX *gidx);
 /* Remove the box from a disk serialization */
 GSERIALIZED* gserialized_drop_gidx(GSERIALIZED *g);
 
-int gidx_from_gbox_p(GBOX box, GIDX *a);
 
 
