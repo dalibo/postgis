@@ -211,13 +211,13 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 	 *     - Otherwise return a POLYGON
 	 */
 
+	pa = ptarray_construct_empty(1, 0, 11);
+	FLAGS_SET_Z(pa->flags, 1);
+
 	if ( (box->xmin == box->xmax) && (box->ymin == box->ymax) &&
 			(box->zmin == box->zmax) )
 	{
-		LWPOINT *lwpt;
-		pa = ptarray_construct_empty(1, 0, 1);
-		FLAGS_SET_Z(pa->flags, 1);
-		lwpt = lwpoint_construct(SRID_UNKNOWN, NULL, pa);
+		LWPOINT *lwpt = lwpoint_construct(SRID_UNKNOWN, NULL, pa);
 
 		pt.x = box->xmin;
 		pt.y = box->ymin;
@@ -236,10 +236,7 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 			   box->zmin == box->zmax) &&
 			   box->xmin == box->xmax))
 	{
-		LWLINE *lwline;
-		pa = ptarray_construct_empty(1, 0, 2);
-		FLAGS_SET_Z(pa->flags, 1);
-		lwline = lwline_construct(SRID_UNKNOWN, NULL, pa);
+		LWLINE *lwline = lwline_construct(SRID_UNKNOWN, NULL, pa);
 
 		pt.x = box->xmin;
 		pt.y = box->ymin;
@@ -254,10 +251,7 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 	}
 	else if (box->xmin == box->xmax)
 	{
-		LWPOLY *lwpoly;
-		pa = ptarray_construct_empty(1, 0, 5);
-		FLAGS_SET_Z(pa->flags, 1);
-		lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
+		LWPOLY *lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
 
 		pt.x = box->xmin;
 		pt.y = box->ymin;
@@ -284,10 +278,7 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 	}
 	else if (box->ymin == box->ymax)
 	{
-		LWPOLY *lwpoly;
-		pa = ptarray_construct_empty(1, 0, 5);
-		FLAGS_SET_Z(pa->flags, 1);
-		lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
+		LWPOLY *lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
 
 		pt.x = box->xmin;
 		pt.y = box->ymin;
@@ -314,10 +305,7 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 	}
 	else if (box->zmin == box->zmax)
 	{
-		LWPOLY *lwpoly;
-		pa = ptarray_construct_empty(1, 0, 5);
-		FLAGS_SET_Z(pa->flags, 1);
-		lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
+		LWPOLY *lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
 
 		pt.x = box->xmin;
 		pt.y = box->ymin;
@@ -344,10 +332,7 @@ Datum BOX3D_to_LWGEOM(PG_FUNCTION_ARGS)
 	}
 	else
 	{
-		LWPOLY *lwpoly;
-		pa = ptarray_construct_empty(1, 0, 11);
-		FLAGS_SET_Z(pa->flags, 1);
-		lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
+		LWPOLY *lwpoly = lwpoly_construct(SRID_UNKNOWN, NULL, 1, &pa);
 
 		pt.x = box->xmin;
 		pt.y = box->ymin;
