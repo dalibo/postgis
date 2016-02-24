@@ -5375,9 +5375,9 @@ CREATE OR REPLACE FUNCTION ST_InterpolatePoint(Line geometry, Point geometry)
 -- N-D BRIN support                                               --
 --------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION is_contained(box3d, geometry)
+CREATE OR REPLACE FUNCTION contains(box3d, geometry)
 RETURNS boolean
-AS 'MODULE_PATHNAME','is_contained_box3d_geom'
+AS 'MODULE_PATHNAME','contains_box3d_geom'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
 CREATE OR REPLACE FUNCTION is_overleft_wrap(a box3d, b box3d)
@@ -6074,7 +6074,7 @@ CREATE OPERATOR CLASS brin_geometry_inclusion_ops_geom
   FUNCTION        3        brin_inclusion_consistent(internal, internal, internal) ,
   FUNCTION        4        brin_inclusion_union(internal, internal, internal) ,
   FUNCTION        11       st_combinebbox(box3d, geometry) ,
-  FUNCTION	  13	   is_contained(box3d, geometry) ,
+  FUNCTION	  13	       contains(box3d, geometry) ,
   STORAGE box3d;
 
 ALTER OPERATOR FAMILY brin_geometry_inclusion_family USING brin ADD
