@@ -64,7 +64,7 @@ gserialized_datum_get_flags(Datum gsdatum)
 
 /* Convert a double-based GBOX into a float-based GIDX,
    ensuring the float box is larger than the double box */
-static int gidx_from_gbox_p(GBOX box, GIDX *a)
+int gidx_from_gbox_p(GBOX box, GIDX *a)
 {
 	int ndims;
 
