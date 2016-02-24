@@ -821,6 +821,17 @@ Datum gserialized_contains(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
+PG_FUNCTION_INFO_V1(gserialized_same);
+Datum gserialized_same(PG_FUNCTION_ARGS)
+{
+	if ( gserialized_datum_predicate(PG_GETARG_DATUM(0),PG_GETARG_DATUM(1), gidx_equals) == LW_TRUE )
+	{
+		PG_RETURN_BOOL(TRUE);
+	}
+
+	PG_RETURN_BOOL(FALSE);
+}
+
 /*
 ** '&&' operator function. Based on two serialized return true if
 ** they overlap and false otherwise.
