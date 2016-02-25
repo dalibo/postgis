@@ -948,6 +948,26 @@ Datum gserialized_overlaps(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
+PG_FUNCTION_INFO_V1(gserialized_gidx_geom_overlaps);
+Datum gserialized_gidx_geom_overlaps(PG_FUNCTION_ARGS)
+{
+   GIDX *gidx = (GIDX *)PG_GETARG_POINTER(0);
+
+   if ( gserialized_datum_predicate_gidx_geom(gidx, PG_GETARG_DATUM(1), gidx_overlaps) == LW_TRUE )
+       PG_RETURN_BOOL(TRUE);
+
+   PG_RETURN_BOOL(FALSE);
+}
+
+PG_FUNCTION_INFO_V1(gserialized_gidx_gidx_overlaps);
+Datum gserialized_gidx_gidx_overlaps(PG_FUNCTION_ARGS)
+{
+   if ( gidx_overlaps((GIDX *)PG_GETARG_POINTER(0), (GIDX *)PG_GETARG_POINTER(1)) )
+       PG_RETURN_BOOL(TRUE);
+
+   PG_RETURN_BOOL(FALSE);
+}
+
 /***********************************************************************
 * GiST Index  Support Functions
 */
