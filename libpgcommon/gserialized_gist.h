@@ -24,6 +24,7 @@ typedef struct
 ** 4 bytes varsize + 4 dimensions * 2 ordinates * 4 bytes float size = 36 bytes
 */
 #define GIDX_MAX_SIZE 36
+#define GIDX_MAX_DIM 4
 
 
 /**********************************************************************
