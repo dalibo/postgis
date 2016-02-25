@@ -5402,29 +5402,12 @@ RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_geom_within'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION overlaps(gix, geometry)
+CREATE OR REPLACE FUNCTION overlaps(gidx, geometry)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_geom_overlaps'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
 
-CREATE OR REPLACE FUNCTION contains(geometry, gidx)
-RETURNS boolean
-AS $$
-  SELECT $2 @ $1;
-$$ LANGUAGE SQL IMMUTABLE STRICT;
-
-CREATE OR REPLACE FUNCTION is_contained(geometry, gidx)
-RETURNS boolean
-AS $$
-  SELECT $2 ~ $1;
-$$ LANGUAGE SQL IMMUTABLE STRICT;
-
-CREATE OR REPLACE FUNCTION overlaps(geometry, gidx)
-RETURNS boolean
-AS $$
-  SELECT $2 && $1;
-$$ LANGUAGE SQL IMMUTABLE STRICT;
 
 
 CREATE OR REPLACE FUNCTION overlaps(gidx, gidx)
@@ -5548,6 +5531,26 @@ CREATE OPERATOR && (
   PROCEDURE  = overlaps,
   COMMUTATOR = &&
 );
+
+
+CREATE OR REPLACE FUNCTION contains(geometry, gidx)
+RETURNS boolean
+AS $$
+  SELECT $2 @ $1;
+$$ LANGUAGE SQL IMMUTABLE STRICT;
+
+CREATE OR REPLACE FUNCTION is_contained(geometry, gidx)
+RETURNS boolean
+AS $$
+  SELECT $2 ~ $1;
+$$ LANGUAGE SQL IMMUTABLE STRICT;
+
+CREATE OR REPLACE FUNCTION overlaps(geometry, gidx)
+RETURNS boolean
+AS $$
+  SELECT $2 && $1;
+$$ LANGUAGE SQL IMMUTABLE STRICT;
+
 
 CREATE OPERATOR ~ (
   LEFTARG = geometry,
@@ -5702,16 +5705,29 @@ CREATE OPERATOR ~ (
 --
 CREATE OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin;
 
+CREATE OR REPLACE FUNCTION ost_combinebbox(a box2d, b geometry) RETURNS box2d AS $$
+DECLARE
+  rv box2d;
+BEGIN
+  rv = st_combinebbox(a, b);
+  RAISE NOTICE 'COMBINE: %s %s %s --> %s', st_astext(a::geometry), a, st_astext(b), rv;
+  RETURN rv;
+END
+$$ language plpgsql;
+
+CREATE OR REPLACE FUNCTION geom2d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS bool 
+	AS 'MODULE_PATHNAME','geom2d_brin_inclusion_add_value'
+	LANGUAGE 'c';
+
 CREATE OPERATOR CLASS brin_geometry_inclusion_ops_2d
   FOR TYPE geometry USING brin FAMILY brin_geometry_inclusion_family_2d AS
     OPERATOR      3        &&(geometry, geometry),
     OPERATOR      7        ~(geometry, geometry),
     OPERATOR      8        @(geometry, geometry),
     FUNCTION      1        brin_inclusion_opcinfo(internal) ,
-    FUNCTION      2        brin_inclusion_add_value(internal, internal, internal, internal) ,
+    FUNCTION      2        geom2d_brin_inclusion_add_value(internal, internal, internal, internal) ,
     FUNCTION      3        brin_inclusion_consistent(internal, internal, internal) ,
     FUNCTION      4        brin_inclusion_union(internal, internal, internal) ,
-    FUNCTION      11       st_combinebbox(box2d, geometry),
   STORAGE gidx;
 
 ALTER OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin ADD
@@ -5764,6 +5780,8 @@ ALTER OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin ADD
 --  OPERATOR        6        ~=~(box3d,box3d) ,
 --  OPERATOR        7        ~~(box3d,box3d) ,
 --  OPERATOR        8        @@(box3d,box3d);
+
+
 
 ---------------------------------------------------------------
 -- END
