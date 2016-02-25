@@ -54,6 +54,9 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 {
 	GIDX * gidx_geom, *gidx_index;
 	int dims_to_copy, dims_geom, i;
+
+	Assert(ndims <= GIDX_MAX_DIM);
+
 	if (isnull)
 	{
 		if (column->bv_hasnulls)
@@ -90,7 +93,6 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 	}
 
 	dims_to_copy = Min(ndims, dims_geom);
-	Assert(dims_to_copy == ndims);
 	gidx_index = (GIDX *) column->bv_values[INCLUSION_UNION];
 
 	for ( i = 0; i < dims_to_copy; i++ )
