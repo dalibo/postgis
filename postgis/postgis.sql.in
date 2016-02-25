@@ -5564,7 +5564,7 @@ CREATE OR REPLACE FUNCTION ST_InterpolatePoint(Line geometry, Point geometry)
 	LANGUAGE 'c' IMMUTABLE STRICT _PARALLEL;
 
 --------------------------------------------------------------------
--- N-D BRIN support                                               --
+-- BRIN support                                               --
 --------------------------------------------------------------------
 
 CREATE OR REPLACE FUNCTION contains(gidx, geometry)
@@ -5597,10 +5597,6 @@ RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_gidx_within'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
---------------------------------
--- Create operators           --
---------------------------------
-
 CREATE OPERATOR ~ (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
@@ -5615,7 +5611,6 @@ CREATE OPERATOR @ (
   COMMUTATOR = ~
 );
 
-
 CREATE OPERATOR && (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
@@ -5623,6 +5618,26 @@ CREATE OPERATOR && (
   COMMUTATOR = &&
 );
 
+CREATE OPERATOR ~~ (
+  LEFTARG    = gidx,
+  RIGHTARG   = geometry,
+  PROCEDURE  = contains,
+  COMMUTATOR = @
+);
+
+CREATE OPERATOR @@ (
+  LEFTARG    = gidx,
+  RIGHTARG   = geometry,
+  PROCEDURE  = is_contained,
+  COMMUTATOR = ~
+);
+
+CREATE OPERATOR &&& (
+  LEFTARG    = gidx,
+  RIGHTARG   = geometry,
+  PROCEDURE  = overlaps,
+  COMMUTATOR = &&
+);
 
 CREATE OR REPLACE FUNCTION contains(geometry, gidx)
 RETURNS boolean
@@ -5641,7 +5656,6 @@ RETURNS boolean
 AS $$
   SELECT $2 && $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
-
 
 CREATE OPERATOR ~ (
   LEFTARG = geometry,
@@ -5685,21 +5699,89 @@ CREATE OPERATOR ~ (
   COMMUTATOR = @
 );
 
------------------------------
--- Create operator family  --
------------------------------
---
-CREATE OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin;
+CREATE OR REPLACE FUNCTION contains(geometry, gidx)
+RETURNS boolean
+AS $$
+  SELECT $2 @@ $1;
+$$ LANGUAGE SQL IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION ost_combinebbox(a box2d, b geometry) RETURNS box2d AS $$
-DECLARE
-  rv box2d;
-BEGIN
-  rv = st_combinebbox(a, b);
-  RAISE NOTICE 'COMBINE: %s %s %s --> %s', st_astext(a::geometry), a, st_astext(b), rv;
-  RETURN rv;
-END
-$$ language plpgsql;
+CREATE OR REPLACE FUNCTION is_contained(geometry, gidx)
+RETURNS boolean
+AS $$
+  SELECT $2 ~~ $1;
+$$ LANGUAGE SQL IMMUTABLE STRICT;
+
+CREATE OR REPLACE FUNCTION overlaps(geometry, gidx)
+RETURNS boolean
+AS $$
+  SELECT $2 &&& $1;
+$$ LANGUAGE SQL IMMUTABLE STRICT;
+
+CREATE OPERATOR ~~ (
+  LEFTARG = geometry,
+  RIGHTARG = gidx,
+  COMMUTATOR = @,
+  PROCEDURE  = contains
+);
+
+CREATE OPERATOR @@ (
+  LEFTARG = geometry,
+  RIGHTARG = gidx,
+  COMMUTATOR = ~,
+  PROCEDURE = is_contained
+);
+
+CREATE OPERATOR &&& (
+  LEFTARG    = geometry,
+  RIGHTARG   = gidx,
+  PROCEDURE  = overlaps,
+  COMMUTATOR = &&
+);
+
+CREATE OPERATOR &&& (
+  LEFTARG   = gidx,
+  RIGHTARG  = gidx,
+  PROCEDURE = overlaps,
+  COMMUTATOR = &&
+);
+
+CREATE OPERATOR @@ (
+  LEFTARG   = gidx,
+  RIGHTARG  = gidx,
+  PROCEDURE = is_contained,
+  COMMUTATOR = ~
+);
+
+CREATE OPERATOR ~~ (
+  LEFTARG   = gidx,
+  RIGHTARG  = gidx,
+  PROCEDURE = contains,
+  COMMUTATOR = @
+);
+
+CREATE OPERATOR @@ (
+  LEFTARG   = geometry,
+  RIGHTARG  = geometry,
+  PROCEDURE = geometry_within_3d,
+  COMMUTATOR = ~
+);
+
+CREATE OPERATOR ~~ (
+  LEFTARG   = geometry,
+  RIGHTARG  = geometry,
+  PROCEDURE = geometry_contains_3d,
+  COMMUTATOR = @
+);
+
+------------------------------
+-- Create operator families --
+------------------------------
+
+-------------
+-- 2D case --
+-------------
+
+CREATE OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin;
 
 CREATE OR REPLACE FUNCTION geom2d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS bool 
 	AS 'MODULE_PATHNAME','geom2d_brin_inclusion_add_value'
@@ -5729,45 +5811,35 @@ ALTER OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin ADD
     OPERATOR      7         ~(gidx, gidx),
     OPERATOR      8         @(gidx, gidx);
 
+-------------
+-- 3D case --
+-------------
 
+CREATE OPERATOR FAMILY brin_geometry_inclusion_family_3d USING brin;
 
+CREATE OPERATOR CLASS brin_geometry_inclusion_ops_3d
+  FOR TYPE geometry USING brin FAMILY brin_geometry_inclusion_family_3d AS
+    OPERATOR      3        &&&(geometry, geometry),
+    OPERATOR      7        ~~(geometry, geometry),
+    OPERATOR      8        @@(geometry, geometry),
+    FUNCTION      1        brin_inclusion_opcinfo(internal) ,
+    FUNCTION      2        geom2d_brin_inclusion_add_value(internal, internal, internal, internal) ,
+    FUNCTION      3        brin_inclusion_consistent(internal, internal, internal) ,
+    FUNCTION      4        brin_inclusion_union(internal, internal, internal) ,
+  STORAGE gidx;
 
---CREATE OPERATOR FAMILY brin_geometry_inclusion_family USING brin;
---
---
---CREATE OPERATOR CLASS brin_geometry_inclusion_ops_geom
---	FOR TYPE geometry  USING brin FAMILY brin_geometry_inclusion_family AS
---  OPERATOR        3        &&&(geometry,geometry) ,
---  OPERATOR        6        ~=~(geometry,geometry) ,
---  OPERATOR        7        ~~(geometry,geometry) ,
---  OPERATOR        8        @@(geometry,geometry) ,
---  FUNCTION        1        brin_inclusion_opcinfo(internal) ,
---  FUNCTION        2        brin_inclusion_add_value(internal, internal, internal, internal) ,
---  FUNCTION        3        brin_inclusion_consistent(internal, internal, internal) ,
---  FUNCTION        4        brin_inclusion_union(internal, internal, internal) ,
---  FUNCTION        11       st_combinebbox(box3d, geometry) ,
---  FUNCTION	  13	   contains3d(box3d, geometry) ,
---  STORAGE box3d;
---
---ALTER OPERATOR FAMILY brin_geometry_inclusion_family USING brin ADD
---  -- cross type comparisons geometry vs box3d
---  OPERATOR        3        &&&(geometry,box3d) ,
---  OPERATOR        6        ~=~(geometry,box3d) ,
---  OPERATOR        7        ~~(geometry,box3d) ,
---  OPERATOR        8        @@(geometry,box3d) ,
---
---  -- cross type comparisons box3d vs geometry
---  OPERATOR        3        &&&(box3d,geometry) ,
---  OPERATOR        6        ~=~(box3d,geometry) ,
---  OPERATOR        7        ~~(box3d,geometry) ,
---  OPERATOR        8        @@(box3d,geometry) ,
---
---  OPERATOR        3        &&&(box3d,box3d) ,
---  OPERATOR        6        ~=~(box3d,box3d) ,
---  OPERATOR        7        ~~(box3d,box3d) ,
---  OPERATOR        8        @@(box3d,box3d);
+ALTER OPERATOR FAMILY brin_geometry_inclusion_family_3d USING brin ADD
+    OPERATOR      3         &&&(gidx, geometry),
+    OPERATOR      7         ~~(gidx, geometry),
+    OPERATOR      8         @@(gidx, geometry),
 
+    OPERATOR      3         &&&(geometry, gidx),
+    OPERATOR      7         ~~(geometry, gidx),
+    OPERATOR      8         @@(geometry, gidx),
 
+    OPERATOR      3         &&&(gidx, gidx),
+    OPERATOR      7         ~~(gidx, gidx),
+    OPERATOR      8         @@(gidx, gidx);
 
 ---------------------------------------------------------------
 -- END
