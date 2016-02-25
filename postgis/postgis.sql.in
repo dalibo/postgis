@@ -745,24 +745,6 @@ CREATE OPERATOR CLASS gist_geometry_ops_2d
 	FUNCTION        6        geometry_gist_picksplit_2d (internal, internal),
 	FUNCTION        7        geometry_gist_same_2d (geom1 geometry, geom2 geometry, internal);
 
--- ---------- ---------- ---------- ---------- ---------- ---------- ----------
--- 3D GEOMETRY Operators - WIP
--- ---------- ---------- ---------- ---------- ---------- ---------- ----------
-CREATE OR REPLACE FUNCTION geometry_within_3d(geom1 geometry, geom2 geometry)
-	RETURNS bool
-	AS 'MODULE_PATHNAME', 'gserialized_within'
-	LANGUAGE 'c' IMMUTABLE STRICT;
-
-CREATE OR REPLACE FUNCTION geometry_contains_3d(geom1 geometry, geom2 geometry)
-	RETURNS bool
-	AS 'MODULE_PATHNAME', 'gserialized_contains'
-	LANGUAGE 'c' IMMUTABLE STRICT;
-
-CREATE OR REPLACE FUNCTION geometry_same_3d(geom1 geometry, geom2 geometry)
-	RETURNS bool
-	AS 'MODULE_PATHNAME', 'gserialized_same'
-	LANGUAGE 'c' IMMUTABLE STRICT;
-
 -----------------------------------------------------------------------------
 -- GiST ND GEOMETRY-over-GSERIALIZED
 -----------------------------------------------------------------------------
@@ -5391,6 +5373,22 @@ CREATE OR REPLACE FUNCTION ST_InterpolatePoint(Line geometry, Point geometry)
 --------------------------------------------------------------------
 -- BRIN support                                               --
 --------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION geometry_contains_3d(geom1 geometry, geom2 geometry)
+RETURNS bool
+AS 'MODULE_PATHNAME', 'gserialized_contains'
+LANGUAGE 'c' IMMUTABLE STRICT;
+
+CREATE OR REPLACE FUNCTION geometry_within_3d(geom1 geometry, geom2 geometry)
+RETURNS bool
+AS 'MODULE_PATHNAME', 'gserialized_within'
+LANGUAGE 'c' IMMUTABLE STRICT;
+
+CREATE OR REPLACE FUNCTION geometry_same_3d(geom1 geometry, geom2 geometry)
+RETURNS bool
+AS 'MODULE_PATHNAME', 'gserialized_same'
+LANGUAGE 'c' IMMUTABLE STRICT;
+
 
 CREATE OR REPLACE FUNCTION contains(gidx, geometry)
 RETURNS boolean
