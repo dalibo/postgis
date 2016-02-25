@@ -5392,154 +5392,150 @@ CREATE OR REPLACE FUNCTION ST_InterpolatePoint(Line geometry, Point geometry)
 -- N-D BRIN support                                               --
 --------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION contains(box2d, geometry)
+CREATE OR REPLACE FUNCTION contains(gidx, geometry)
 RETURNS boolean
-AS 'MODULE_PATHNAME','contains_box2d_geom'
+AS 'MODULE_PATHNAME','gserialized_gidx_geom_contains'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION is_contained(box2d, geometry)
+CREATE OR REPLACE FUNCTION is_contained(gidx, geometry)
 RETURNS boolean
-AS 'MODULE_PATHNAME','is_contained_box2d_geom'
+AS 'MODULE_PATHNAME','gserialized_gidx_geom_within'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION overlaps(box2d, geometry)
+CREATE OR REPLACE FUNCTION overlaps(gix, geometry)
 RETURNS boolean
-AS 'MODULE_PATHNAME','overlaps_box2d_geom'
+AS 'MODULE_PATHNAME','gserialized_gidx_geom_overlaps'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
 
-CREATE OR REPLACE FUNCTION contains(geometry, box2d)
+CREATE OR REPLACE FUNCTION contains(geometry, gidx)
 RETURNS boolean
 AS $$
   SELECT $2 @ $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION is_contained(geometry, box2d)
+CREATE OR REPLACE FUNCTION is_contained(geometry, gidx)
 RETURNS boolean
 AS $$
   SELECT $2 ~ $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION overlaps(geometry, box2d)
+CREATE OR REPLACE FUNCTION overlaps(geometry, gidx)
 RETURNS boolean
 AS $$
   SELECT $2 && $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
 
-CREATE OR REPLACE FUNCTION overlaps(box2d, box2d)
+CREATE OR REPLACE FUNCTION overlaps(gidx, gidx)
 RETURNS boolean
-AS $$
-  SELECT $1 && $2::geometry;
-$$ LANGUAGE SQL IMMUTABLE STRICT;
-
-CREATE OR REPLACE FUNCTION contains(box2d, box2d)
-RETURNS boolean
-AS $$
-  SELECT $1 ~ $2::geometry;
-$$ LANGUAGE SQL IMMUTABLE STRICT;
-
-CREATE OR REPLACE FUNCTION is_contained(box2d, box2d)
-RETURNS boolean
-AS $$
-  SELECT $1 @ $2::geometry;
-$$ LANGUAGE SQL IMMUTABLE STRICT;
-
-
-
-
-
-
-CREATE OR REPLACE FUNCTION contains3d(box3d, geometry)
-RETURNS boolean
-AS 'MODULE_PATHNAME','contains_box3d_geom'
+AS 'MODULE_PATHNAME','gserialized_gidx_gidx_overlaps'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION overlaps_3d(geometry, box3d)
-RETURNS boolean AS
-$$
-    SELECT geometry_overlaps_nd($1,$2::geometry);
-$$ LANGUAGE 'sql' IMMUTABLE;
+CREATE OR REPLACE FUNCTION contains(gidx, gidx)
+RETURNS boolean
+AS 'MODULE_PATHNAME','gserialized_gidx_gidx_contains'
+LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION overlaps_3d(box3d, geometry)
-RETURNS boolean AS
-$$
-    SELECT geometry_overlaps_nd($1::geometry,$2);
-$$ LANGUAGE 'sql' IMMUTABLE;
+CREATE OR REPLACE FUNCTION is_contained(gidx, gidx)
+RETURNS boolean
+AS 'MODULE_PATHNAME','gserialized_gidx_gidx_within'
+LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION overlaps_3d(box3d, box3d)
-RETURNS boolean AS
-$$
-    SELECT geometry_overlaps_nd($1::geometry,$2::geometry);
-$$ LANGUAGE 'sql' IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION is_thesame_3d(geometry, box3d)
-RETURNS boolean AS
-$$
-    SELECT geometry_same_3d($1,$2::geometry);
-$$ LANGUAGE 'sql' IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION is_thesame_3d(box3d, geometry)
-RETURNS boolean AS
-$$
-    SELECT geometry_same_3d($1::geometry,$2);
-$$ LANGUAGE 'sql' IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION is_thesame_3d(box3d, box3d)
-RETURNS boolean AS
-$$
-    SELECT geometry_same_3d($1::geometry,$2::geometry);
-$$ LANGUAGE 'sql' IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION contains_3d(geometry, box3d)
-RETURNS boolean AS
-$$
-    SELECT geometry_contains_3d($1,$2::geometry);
-$$ LANGUAGE 'sql' IMMUTABLE;
+--CREATE OR REPLACE FUNCTION contains3d(box3d, geometry)
+--RETURNS boolean
+--AS 'MODULE_PATHNAME','contains_box3d_geom'
+--LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION contains_3d(box3d, geometry)
-RETURNS boolean AS
-$$
-    SELECT geometry_contains_3d($1::geometry,$2);
-$$ LANGUAGE 'sql' IMMUTABLE;
+--CREATE OR REPLACE FUNCTION overlaps_3d(geometry, box3d)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_overlaps_nd($1,$2::geometry);
+--$$ LANGUAGE 'sql' IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION contains_3d(box3d, box3d)
-RETURNS boolean AS
-$$
-    SELECT geometry_contains_3d($1::geometry,$2::geometry);
-$$ LANGUAGE 'sql' IMMUTABLE;
+--CREATE OR REPLACE FUNCTION overlaps_3d(box3d, geometry)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_overlaps_nd($1::geometry,$2);
+--$$ LANGUAGE 'sql' IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION is_contained_3d(geometry, box3d)
-RETURNS boolean AS
-$$
-    SELECT geometry_within_3d($1,$2::geometry);
-$$ LANGUAGE 'sql' IMMUTABLE;
+--CREATE OR REPLACE FUNCTION overlaps_3d(box3d, box3d)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_overlaps_nd($1::geometry,$2::geometry);
+--$$ LANGUAGE 'sql' IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION is_contained_3d(box3d, geometry)
-RETURNS boolean AS
-$$
-    SELECT geometry_within_3d($1::geometry,$2);
-$$ LANGUAGE 'sql' IMMUTABLE;
+--CREATE OR REPLACE FUNCTION is_thesame_3d(geometry, box3d)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_same_3d($1,$2::geometry);
+--$$ LANGUAGE 'sql' IMMUTABLE;
 
-CREATE OR REPLACE FUNCTION is_contained_3d(box3d, box3d)
-RETURNS boolean AS
-$$
-    SELECT geometry_within_3d($1::geometry,$2::geometry);
-$$ LANGUAGE 'sql' IMMUTABLE;
+--CREATE OR REPLACE FUNCTION is_thesame_3d(box3d, geometry)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_same_3d($1::geometry,$2);
+--$$ LANGUAGE 'sql' IMMUTABLE;
+
+--CREATE OR REPLACE FUNCTION is_thesame_3d(box3d, box3d)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_same_3d($1::geometry,$2::geometry);
+--$$ LANGUAGE 'sql' IMMUTABLE;
+
+--CREATE OR REPLACE FUNCTION contains_3d(geometry, box3d)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_contains_3d($1,$2::geometry);
+--$$ LANGUAGE 'sql' IMMUTABLE;
+
+--CREATE OR REPLACE FUNCTION contains_3d(box3d, geometry)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_contains_3d($1::geometry,$2);
+--$$ LANGUAGE 'sql' IMMUTABLE;
+
+--CREATE OR REPLACE FUNCTION contains_3d(box3d, box3d)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_contains_3d($1::geometry,$2::geometry);
+--$$ LANGUAGE 'sql' IMMUTABLE;
+
+--CREATE OR REPLACE FUNCTION is_contained_3d(geometry, box3d)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_within_3d($1,$2::geometry);
+--$$ LANGUAGE 'sql' IMMUTABLE;
+
+--CREATE OR REPLACE FUNCTION is_contained_3d(box3d, geometry)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_within_3d($1::geometry,$2);
+--$$ LANGUAGE 'sql' IMMUTABLE;
+
+--CREATE OR REPLACE FUNCTION is_contained_3d(box3d, box3d)
+--RETURNS boolean AS
+--$$
+--    SELECT geometry_within_3d($1::geometry,$2::geometry);
+--$$ LANGUAGE 'sql' IMMUTABLE;
 
 --------------------------------
 -- Create operators           --
 --------------------------------
 
 CREATE OPERATOR ~ (
-  LEFTARG    = box2d,
+  LEFTARG    = gidx,
   RIGHTARG   = geometry,
   PROCEDURE  = contains,
   COMMUTATOR = @
 );
 
 CREATE OPERATOR @ (
-  LEFTARG    = box2d,
+  LEFTARG    = gidx,
   RIGHTARG   = geometry,
   PROCEDURE  = is_contained,
   COMMUTATOR = ~
@@ -5547,7 +5543,7 @@ CREATE OPERATOR @ (
 
 
 CREATE OPERATOR && (
-  LEFTARG    = box2d,
+  LEFTARG    = gidx,
   RIGHTARG   = geometry,
   PROCEDURE  = overlaps,
   COMMUTATOR = &&
@@ -5555,150 +5551,150 @@ CREATE OPERATOR && (
 
 CREATE OPERATOR ~ (
   LEFTARG = geometry,
-  RIGHTARG = box2d,
+  RIGHTARG = gidx,
   COMMUTATOR = @,
   PROCEDURE  = contains
 );
 
 CREATE OPERATOR @ (
   LEFTARG = geometry,
-  RIGHTARG = box2d,
+  RIGHTARG = gidx,
   COMMUTATOR = ~,
   PROCEDURE = is_contained
 );
 
 CREATE OPERATOR && (
   LEFTARG    = geometry,
-  RIGHTARG   = box2d,
+  RIGHTARG   = gidx,
   PROCEDURE  = overlaps,
   COMMUTATOR = &&
 );
 
 CREATE OPERATOR && (
-  LEFTARG   = box2d,
-  RIGHTARG  = box2d,
+  LEFTARG   = gidx,
+  RIGHTARG  = gidx,
   PROCEDURE = overlaps,
   COMMUTATOR = &&
 );
 
 CREATE OPERATOR @ (
-  LEFTARG   = box2d,
-  RIGHTARG  = box2d,
+  LEFTARG   = gidx,
+  RIGHTARG  = gidx,
   PROCEDURE = is_contained,
   COMMUTATOR = ~
 );
 
 CREATE OPERATOR ~ (
-  LEFTARG   = box2d,
-  RIGHTARG  = box2d,
+  LEFTARG   = gidx,
+  RIGHTARG  = gidx,
   PROCEDURE = contains,
   COMMUTATOR = @
 );
 
-CREATE OPERATOR &&& (
-  LEFTARG    = box3d,
-  RIGHTARG   = geometry,
-  PROCEDURE  = overlaps_3d,
-  COMMUTATOR = &&&
-);
+--CREATE OPERATOR &&& (
+--  LEFTARG    = box3d,
+--  RIGHTARG   = geometry,
+--  PROCEDURE  = overlaps_3d,
+--  COMMUTATOR = &&&
+--);
 
-CREATE OPERATOR &&& (
-  LEFTARG    = box3d,
-  RIGHTARG   = box3d,
-  PROCEDURE  = overlaps_3d,
-  COMMUTATOR = &&&
-);
+--CREATE OPERATOR &&& (
+--  LEFTARG    = box3d,
+--  RIGHTARG   = box3d,
+--  PROCEDURE  = overlaps_3d,
+--  COMMUTATOR = &&&
+--);
 
-CREATE OPERATOR &&& (
-  LEFTARG    = geometry,
-  RIGHTARG   = box3d,
-  PROCEDURE  = overlaps_3d,
-  COMMUTATOR = &&&
-);
-
-CREATE OPERATOR ~=~ (
-  LEFTARG    = geometry,
-  RIGHTARG   = geometry,
-  PROCEDURE  = geometry_same_3d,
-  COMMUTATOR = ~=~
-);
-
-CREATE OPERATOR ~=~ (
-  LEFTARG    = box3d,
-  RIGHTARG   = geometry,
-  PROCEDURE  = is_thesame_3d,
-  COMMUTATOR = ~=~
-);
-
-CREATE OPERATOR ~=~ (
-  LEFTARG    = box3d,
-  RIGHTARG   = box3d,
-  PROCEDURE  = is_thesame_3d,
-  COMMUTATOR = ~=~
-);
-
-CREATE OPERATOR ~=~ (
-  LEFTARG    = geometry,
-  RIGHTARG   = box3d,
-  PROCEDURE  = is_thesame_3d,
-  COMMUTATOR = ~=~
-);
-
-CREATE OPERATOR ~~ (
-  LEFTARG    = geometry,
-  RIGHTARG   = geometry,
-  PROCEDURE  = geometry_contains_3d,
-  COMMUTATOR = ~~
-);
-
-CREATE OPERATOR ~~ (
-  LEFTARG    = box3d,
-  RIGHTARG   = geometry,
-  PROCEDURE  = contains_3d,
-  COMMUTATOR = ~~
-);
-
-CREATE OPERATOR ~~ (
-  LEFTARG    = box3d,
-  RIGHTARG   = box3d,
-  PROCEDURE  = contains_3d,
-  COMMUTATOR = ~~
-);
-
-CREATE OPERATOR ~~ (
-  LEFTARG    = geometry,
-  RIGHTARG   = box3d,
-  PROCEDURE  = contains_3d,
-  COMMUTATOR = ~~
-);
-
-CREATE OPERATOR @@ (
-  LEFTARG    = geometry,
-  RIGHTARG   = geometry,
-  PROCEDURE  = geometry_within_3d,
-  COMMUTATOR = @@
-);
-
-CREATE OPERATOR @@ (
-  LEFTARG    = box3d,
-  RIGHTARG   = geometry,
-  PROCEDURE  = is_contained_3d,
-  COMMUTATOR = @@
-);
-
-CREATE OPERATOR @@ (
-  LEFTARG    = box3d,
-  RIGHTARG   = box3d,
-  PROCEDURE  = is_contained_3d,
-  COMMUTATOR = @@
-);
-
-CREATE OPERATOR @@ (
-  LEFTARG    = geometry,
-  RIGHTARG   = box3d,
-  PROCEDURE  = is_contained_3d,
-  COMMUTATOR = @@
-);
+--CREATE OPERATOR &&& (
+--  LEFTARG    = geometry,
+--  RIGHTARG   = box3d,
+--  PROCEDURE  = overlaps_3d,
+--  COMMUTATOR = &&&
+--);
+--
+--CREATE OPERATOR ~=~ (
+--  LEFTARG    = geometry,
+--  RIGHTARG   = geometry,
+--  PROCEDURE  = geometry_same_3d,
+--  COMMUTATOR = ~=~
+--);
+--
+--CREATE OPERATOR ~=~ (
+--  LEFTARG    = box3d,
+--  RIGHTARG   = geometry,
+--  PROCEDURE  = is_thesame_3d,
+--  COMMUTATOR = ~=~
+--);
+--
+--CREATE OPERATOR ~=~ (
+--  LEFTARG    = box3d,
+--  RIGHTARG   = box3d,
+--  PROCEDURE  = is_thesame_3d,
+--  COMMUTATOR = ~=~
+--);
+--
+--CREATE OPERATOR ~=~ (
+--  LEFTARG    = geometry,
+--  RIGHTARG   = box3d,
+--  PROCEDURE  = is_thesame_3d,
+--  COMMUTATOR = ~=~
+--);
+--
+--CREATE OPERATOR ~~ (
+--  LEFTARG    = geometry,
+--  RIGHTARG   = geometry,
+--  PROCEDURE  = geometry_contains_3d,
+--  COMMUTATOR = ~~
+--);
+--
+--CREATE OPERATOR ~~ (
+--  LEFTARG    = box3d,
+--  RIGHTARG   = geometry,
+--  PROCEDURE  = contains_3d,
+--  COMMUTATOR = ~~
+--);
+--
+--CREATE OPERATOR ~~ (
+--  LEFTARG    = box3d,
+--  RIGHTARG   = box3d,
+--  PROCEDURE  = contains_3d,
+--  COMMUTATOR = ~~
+--);
+--
+--CREATE OPERATOR ~~ (
+--  LEFTARG    = geometry,
+--  RIGHTARG   = box3d,
+--  PROCEDURE  = contains_3d,
+--  COMMUTATOR = ~~
+--);
+--
+--CREATE OPERATOR @@ (
+--  LEFTARG    = geometry,
+--  RIGHTARG   = geometry,
+--  PROCEDURE  = geometry_within_3d,
+--  COMMUTATOR = @@
+--);
+--
+--CREATE OPERATOR @@ (
+--  LEFTARG    = box3d,
+--  RIGHTARG   = geometry,
+--  PROCEDURE  = is_contained_3d,
+--  COMMUTATOR = @@
+--);
+--
+--CREATE OPERATOR @@ (
+--  LEFTARG    = box3d,
+--  RIGHTARG   = box3d,
+--  PROCEDURE  = is_contained_3d,
+--  COMMUTATOR = @@
+--);
+--
+--CREATE OPERATOR @@ (
+--  LEFTARG    = geometry,
+--  RIGHTARG   = box3d,
+--  PROCEDURE  = is_contained_3d,
+--  COMMUTATOR = @@
+--);
 
 -----------------------------
 -- Create operator family  --
@@ -5716,58 +5712,58 @@ CREATE OPERATOR CLASS brin_geometry_inclusion_ops_2d
     FUNCTION      3        brin_inclusion_consistent(internal, internal, internal) ,
     FUNCTION      4        brin_inclusion_union(internal, internal, internal) ,
     FUNCTION      11       st_combinebbox(box2d, geometry),
-  STORAGE box2d;
+  STORAGE gidx;
 
 ALTER OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin ADD
-    OPERATOR      3         &&(box2d, geometry),
-    OPERATOR      7         ~(box2d, geometry),
-    OPERATOR      8         @(box2d, geometry),
+    OPERATOR      3         &&(gidx, geometry),
+    OPERATOR      7         ~(gidx, geometry),
+    OPERATOR      8         @(gidx, geometry),
 
-    OPERATOR      3         &&(geometry, box2d),
-    OPERATOR      7         ~(geometry, box2d),
-    OPERATOR      8         @(geometry, box2d),
+    OPERATOR      3         &&(geometry, gidx),
+    OPERATOR      7         ~(geometry, gidx),
+    OPERATOR      8         @(geometry, gidx),
 
-    OPERATOR      3         &&(box2d, box2d),
-    OPERATOR      7         ~(box2d, box2d),
-    OPERATOR      8         @(box2d, box2d);
-
-
+    OPERATOR      3         &&(gidx, gidx),
+    OPERATOR      7         ~(gidx, gidx),
+    OPERATOR      8         @(gidx, gidx);
 
 
-CREATE OPERATOR FAMILY brin_geometry_inclusion_family USING brin;
 
 
-CREATE OPERATOR CLASS brin_geometry_inclusion_ops_geom
-	FOR TYPE geometry  USING brin FAMILY brin_geometry_inclusion_family AS
-  OPERATOR        3        &&&(geometry,geometry) ,
-  OPERATOR        6        ~=~(geometry,geometry) ,
-  OPERATOR        7        ~~(geometry,geometry) ,
-  OPERATOR        8        @@(geometry,geometry) ,
-  FUNCTION        1        brin_inclusion_opcinfo(internal) ,
-  FUNCTION        2        brin_inclusion_add_value(internal, internal, internal, internal) ,
-  FUNCTION        3        brin_inclusion_consistent(internal, internal, internal) ,
-  FUNCTION        4        brin_inclusion_union(internal, internal, internal) ,
-  FUNCTION        11       st_combinebbox(box3d, geometry) ,
-  FUNCTION	  13	   contains3d(box3d, geometry) ,
-  STORAGE box3d;
-
-ALTER OPERATOR FAMILY brin_geometry_inclusion_family USING brin ADD
-  -- cross type comparisons geometry vs box3d
-  OPERATOR        3        &&&(geometry,box3d) ,
-  OPERATOR        6        ~=~(geometry,box3d) ,
-  OPERATOR        7        ~~(geometry,box3d) ,
-  OPERATOR        8        @@(geometry,box3d) ,
-
-  -- cross type comparisons box3d vs geometry
-  OPERATOR        3        &&&(box3d,geometry) ,
-  OPERATOR        6        ~=~(box3d,geometry) ,
-  OPERATOR        7        ~~(box3d,geometry) ,
-  OPERATOR        8        @@(box3d,geometry) ,
-
-  OPERATOR        3        &&&(box3d,box3d) ,
-  OPERATOR        6        ~=~(box3d,box3d) ,
-  OPERATOR        7        ~~(box3d,box3d) ,
-  OPERATOR        8        @@(box3d,box3d);
+--CREATE OPERATOR FAMILY brin_geometry_inclusion_family USING brin;
+--
+--
+--CREATE OPERATOR CLASS brin_geometry_inclusion_ops_geom
+--	FOR TYPE geometry  USING brin FAMILY brin_geometry_inclusion_family AS
+--  OPERATOR        3        &&&(geometry,geometry) ,
+--  OPERATOR        6        ~=~(geometry,geometry) ,
+--  OPERATOR        7        ~~(geometry,geometry) ,
+--  OPERATOR        8        @@(geometry,geometry) ,
+--  FUNCTION        1        brin_inclusion_opcinfo(internal) ,
+--  FUNCTION        2        brin_inclusion_add_value(internal, internal, internal, internal) ,
+--  FUNCTION        3        brin_inclusion_consistent(internal, internal, internal) ,
+--  FUNCTION        4        brin_inclusion_union(internal, internal, internal) ,
+--  FUNCTION        11       st_combinebbox(box3d, geometry) ,
+--  FUNCTION	  13	   contains3d(box3d, geometry) ,
+--  STORAGE box3d;
+--
+--ALTER OPERATOR FAMILY brin_geometry_inclusion_family USING brin ADD
+--  -- cross type comparisons geometry vs box3d
+--  OPERATOR        3        &&&(geometry,box3d) ,
+--  OPERATOR        6        ~=~(geometry,box3d) ,
+--  OPERATOR        7        ~~(geometry,box3d) ,
+--  OPERATOR        8        @@(geometry,box3d) ,
+--
+--  -- cross type comparisons box3d vs geometry
+--  OPERATOR        3        &&&(box3d,geometry) ,
+--  OPERATOR        6        ~=~(box3d,geometry) ,
+--  OPERATOR        7        ~~(box3d,geometry) ,
+--  OPERATOR        8        @@(box3d,geometry) ,
+--
+--  OPERATOR        3        &&&(box3d,box3d) ,
+--  OPERATOR        6        ~=~(box3d,box3d) ,
+--  OPERATOR        7        ~~(box3d,box3d) ,
+--  OPERATOR        8        @@(box3d,box3d);
 
 ---------------------------------------------------------------
 -- END
