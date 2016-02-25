@@ -476,6 +476,47 @@ gserialized_datum_predicate(Datum gs1, Datum gs2, gidx_predicate predicate)
 	return LW_FALSE;
 }
 
+static int
+gserialized_datum_predicate_gidx_geom(GIDX *gidx1, Datum gs2, gidx_predicate predicate)
+{
+   /* Put aside some stack memory and use it for GIDX pointers. */
+   char boxmem2[GIDX_MAX_SIZE];
+   GIDX *gidx2 = (GIDX*)boxmem2;
+
+   POSTGIS_DEBUG(3, "entered function");
+
+   /* Must be able to build box for gs2 arguement (ie, not empty geometry)
+      and predicate function to return true. */
+   if ( (gserialized_datum_get_gidx_p(gs2, gidx2) == LW_SUCCESS) &&
+         predicate(gidx1, gidx2) )
+   {
+       POSTGIS_DEBUGF(3, "got boxes %s and %s", gidx_to_string(gidx1), gidx_to_string(gidx2));
+       return LW_TRUE;
+   }
+   return LW_FALSE;
+}
+
+static int
+gserialized_datum_predicate_geom_gidx(Datum gs1, GIDX *gidx2, gidx_predicate predicate)
+{
+   /* Put aside some stack memory and use it for GIDX pointers. */
+   char boxmem2[GIDX_MAX_SIZE];
+   GIDX *gidx1 = (GIDX*)boxmem2;
+
+   POSTGIS_DEBUG(3, "entered function");
+
+   /* Must be able to build box for gs2 arguement (ie, not empty geometry)
+      and predicate function to return true. */
+   if ( (gserialized_datum_get_gidx_p(gs1, gidx1) == LW_SUCCESS) &&
+         predicate(gidx1, gidx2) )
+   {
+       POSTGIS_DEBUGF(3, "got boxes %s and %s", gidx_to_string(gidx1), gidx_to_string(gidx2));
+       return LW_TRUE;
+   }
+   return LW_FALSE;
+}
+
+
 /**
 * Calculate the centroid->centroid distance between the boxes.
 */
@@ -806,6 +847,26 @@ Datum gserialized_within(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
+PG_FUNCTION_INFO_V1(gserialized_gidx_geom_within);
+Datum gserialized_gidx_geom_within(PG_FUNCTION_ARGS)
+{
+   GIDX *gidx = (GIDX *)PG_GETARG_POINTER(0);
+
+   if ( gserialized_datum_predicate_geom_gidx(PG_GETARG_DATUM(1), gidx, gidx_contains) == LW_TRUE )
+       PG_RETURN_BOOL(TRUE);
+
+   PG_RETURN_BOOL(FALSE);
+}
+
+PG_FUNCTION_INFO_V1(gserialized_gidx_gidx_within);
+Datum gserialized_gidx_gidx_within(PG_FUNCTION_ARGS)
+{
+   if ( gidx_contains((GIDX *)PG_GETARG_POINTER(1), (GIDX *)PG_GETARG_POINTER(0)))
+       PG_RETURN_BOOL(TRUE);
+
+   PG_RETURN_BOOL(FALSE);
+}
+
 /*
 ** '@' and operator function. Based on two serialized return true if
 ** the first contains the second.
@@ -821,6 +882,26 @@ Datum gserialized_contains(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
+PG_FUNCTION_INFO_V1(gserialized_gidx_geom_contains);
+Datum gserialized_gidx_geom_contains(PG_FUNCTION_ARGS)
+{
+   GIDX *gidx = (GIDX *)PG_GETARG_POINTER(0);
+
+   if ( gserialized_datum_predicate_gidx_geom(gidx, PG_GETARG_DATUM(1), gidx_contains) == LW_TRUE )
+       PG_RETURN_BOOL(TRUE);
+
+   PG_RETURN_BOOL(FALSE);
+}
+
+PG_FUNCTION_INFO_V1(gserialized_gidx_gidx_contains);
+Datum gserialized_gidx_gidx_contains(PG_FUNCTION_ARGS)
+{
+   if ( gidx_contains((GIDX *)PG_GETARG_POINTER(0), (GIDX *)PG_GETARG_POINTER(1)))
+       PG_RETURN_BOOL(TRUE);
+
+   PG_RETURN_BOOL(FALSE);
+}
+
 PG_FUNCTION_INFO_V1(gserialized_same);
 Datum gserialized_same(PG_FUNCTION_ARGS)
 {
@@ -830,6 +911,26 @@ Datum gserialized_same(PG_FUNCTION_ARGS)
 	}
 
 	PG_RETURN_BOOL(FALSE);
+}
+
+PG_FUNCTION_INFO_V1(gserialized_gidx_geom_same);
+Datum gserialized_gidx_geom_same(PG_FUNCTION_ARGS)
+{
+   GIDX *gidx = (GIDX *)PG_GETARG_POINTER(0);
+
+   if ( gserialized_datum_predicate_gidx_geom(gidx, PG_GETARG_DATUM(1), gidx_equals) == LW_TRUE )
+       PG_RETURN_BOOL(TRUE);
+
+   PG_RETURN_BOOL(FALSE);
+}
+
+PG_FUNCTION_INFO_V1(gserialized_gidx_gidx_same);
+Datum gserialized_gidx_gidx_same(PG_FUNCTION_ARGS)
+{
+   if ( gidx_equals((GIDX *)PG_GETARG_POINTER(0), (GIDX *)PG_GETARG_POINTER(1)) )
+       PG_RETURN_BOOL(TRUE);
+
+   PG_RETURN_BOOL(FALSE);
 }
 
 /*
