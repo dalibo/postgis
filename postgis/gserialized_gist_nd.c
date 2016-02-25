@@ -100,8 +100,14 @@ Datum gserialized_gist_geog_distance(PG_FUNCTION_ARGS);
 */
 Datum gserialized_overlaps(PG_FUNCTION_ARGS);
 Datum gserialized_contains(PG_FUNCTION_ARGS);
+Datum gserialized_gidx_geom_contains(PG_FUNCTION_ARGS);
+Datum gserialized_gidx_gidx_contains(PG_FUNCTION_ARGS);
 Datum gserialized_within(PG_FUNCTION_ARGS);
+Datum gserialized_gidx_geom_within(PG_FUNCTION_ARGS);
+Datum gserialized_gidx_gidx_within(PG_FUNCTION_ARGS);
 Datum gserialized_distance_nd(PG_FUNCTION_ARGS);
+Datum gserialized_gidx_geom_same(PG_FUNCTION_ARGS);
+Datum gserialized_gidx_gidx_same(PG_FUNCTION_ARGS);
 
 /*
 ** GIDX true/false test function type
@@ -847,6 +853,10 @@ Datum gserialized_within(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
+/*
+** '~' and operator function. Based on a GIDX and a serialized return true if
+** the first is contained by the second.
+*/
 PG_FUNCTION_INFO_V1(gserialized_gidx_geom_within);
 Datum gserialized_gidx_geom_within(PG_FUNCTION_ARGS)
 {
@@ -858,6 +868,10 @@ Datum gserialized_gidx_geom_within(PG_FUNCTION_ARGS)
    PG_RETURN_BOOL(FALSE);
 }
 
+/*
+** '~' and operator function. Based on two GIDX return true if
+** the first is contained by the second.
+*/
 PG_FUNCTION_INFO_V1(gserialized_gidx_gidx_within);
 Datum gserialized_gidx_gidx_within(PG_FUNCTION_ARGS)
 {
@@ -882,6 +896,10 @@ Datum gserialized_contains(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
+/*
+** '@' and operator function. Based on a GIDX and a serialized return true if
+** the first contains the second.
+*/
 PG_FUNCTION_INFO_V1(gserialized_gidx_geom_contains);
 Datum gserialized_gidx_geom_contains(PG_FUNCTION_ARGS)
 {
@@ -893,6 +911,10 @@ Datum gserialized_gidx_geom_contains(PG_FUNCTION_ARGS)
    PG_RETURN_BOOL(FALSE);
 }
 
+/*
+** '@' and operator function. Based on two GIDX return true if
+** the first contains the second.
+*/
 PG_FUNCTION_INFO_V1(gserialized_gidx_gidx_contains);
 Datum gserialized_gidx_gidx_contains(PG_FUNCTION_ARGS)
 {
