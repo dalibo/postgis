@@ -44,11 +44,16 @@ geom3d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 	PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdesc, column, newval, isnull, 3));
 }
 
+/*
+ * As we index geometries but store a GIDX, we need to overload the original
+ * brin_inclusion_add_value() function to be able to do this. Other original
+ * mandatory support functions doesn't need to be overloaded.
+ */
 Datum
 gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval, bool isnull, int ndims)
 {
 	GIDX * gidx_geom, *gidx_index;
-	int dims_to_copy, i;
+	int dims_to_copy, dims_geom, i;
 	if (isnull)
 	{
 		if (column->bv_hasnulls)
@@ -57,26 +62,37 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 		column->bv_hasnulls = true;
 		PG_RETURN_BOOL(true);
 	}
-	gidx_geom = gidx_new(4);
-	if(gserialized_datum_get_gidx_p(newval, gidx_geom) == LW_FAILURE){
+
+	/*
+	 * Always allocate memory for max GIDX dimension, for safety and further
+	 * evolution up to max GIDX dimension geometries
+	 */
+	gidx_geom = gidx_new(GIDX_MAX_DIM);
+
+	if(gserialized_datum_get_gidx_p(newval, gidx_geom) == LW_FAILURE)
 		elog(ERROR, "Error while extracting the gidx from the geom");
-	}
+
+	dims_geom = GIDX_NDIMS(gidx_geom);
+
 	if (column->bv_allnulls)
 	{
 		/* For clarity, set extraneous dimensions to 0 */
-		for(i=ndims; i < GIDX_NDIMS(gidx_geom); i++){
+		for(i=ndims; i < dims_geom; i++)
+		{
 			GIDX_SET_MIN(gidx_geom, i, (int) 0);
 			GIDX_SET_MAX(gidx_geom, i, (int) 0);
 		}
-		column->bv_values[INCLUSION_UNION] = datumCopy((Datum) gidx_geom, false, GIDX_SIZE(GIDX_NDIMS(gidx_geom)));
+		column->bv_values[INCLUSION_UNION] = datumCopy((Datum) gidx_geom, false, GIDX_SIZE(dims_geom));
 		column->bv_values[INCLUSION_UNMERGEABLE] = BoolGetDatum(false);
 		column->bv_values[INCLUSION_CONTAINS_EMPTY] = BoolGetDatum(false);
 		column->bv_allnulls = false;
 		PG_RETURN_BOOL(true);
 	}
-	dims_to_copy = Min(ndims, GIDX_NDIMS(gidx_geom));
+
+	dims_to_copy = Min(ndims, dims_geom);
 	Assert(dims_to_copy == ndims);
 	gidx_index = (GIDX *) column->bv_values[INCLUSION_UNION];
+
 	for ( i = 0; i < dims_to_copy; i++ )
 	{
 		/* Adjust minimums */
@@ -85,5 +101,6 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 		GIDX_SET_MAX(gidx_index, i, Max(GIDX_GET_MAX(gidx_index,i),GIDX_GET_MAX(gidx_geom,i)));
 	}
 	pfree(gidx_geom);
+
 	PG_RETURN_BOOL(false);
 }
