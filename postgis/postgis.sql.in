@@ -5535,16 +5535,14 @@ CREATE OPERATOR ~ (
   LEFTARG    = box2d,
   RIGHTARG   = geometry,
   PROCEDURE  = contains,
-  COMMUTATOR = @,
-  RESTRICT   = contsel
+  COMMUTATOR = @
 );
 
 CREATE OPERATOR @ (
   LEFTARG    = box2d,
   RIGHTARG   = geometry,
   PROCEDURE  = is_contained,
-  COMMUTATOR = ~,
-  RESTRICT   = contsel
+  COMMUTATOR = ~
 );
 
 
@@ -5552,56 +5550,49 @@ CREATE OPERATOR && (
   LEFTARG    = box2d,
   RIGHTARG   = geometry,
   PROCEDURE  = overlaps,
-  COMMUTATOR = &&,
-  RESTRICT = gserialized_gist_sel_2d
+  COMMUTATOR = &&
 );
 
 CREATE OPERATOR ~ (
   LEFTARG = geometry,
   RIGHTARG = box2d,
   COMMUTATOR = @,
-  PROCEDURE  = contains,
-  RESTRICT   = contsel
+  PROCEDURE  = contains
 );
 
 CREATE OPERATOR @ (
   LEFTARG = geometry,
   RIGHTARG = box2d,
   COMMUTATOR = ~,
-  PROCEDURE = is_contained,
-  RESTRICT   = contsel
+  PROCEDURE = is_contained
 );
 
 CREATE OPERATOR && (
   LEFTARG    = geometry,
   RIGHTARG   = box2d,
   PROCEDURE  = overlaps,
-  COMMUTATOR = &&,
-  RESTRICT = gserialized_gist_sel_2d
+  COMMUTATOR = &&
 );
 
 CREATE OPERATOR && (
   LEFTARG   = box2d,
   RIGHTARG  = box2d,
   PROCEDURE = overlaps,
-  COMMUTATOR = &&,
-  RESTRICT = gserialized_gist_sel_2d
+  COMMUTATOR = &&
 );
 
 CREATE OPERATOR @ (
   LEFTARG   = box2d,
   RIGHTARG  = box2d,
   PROCEDURE = is_contained,
-  COMMUTATOR = ~,
-  RESTRICT   = contsel
+  COMMUTATOR = ~
 );
 
 CREATE OPERATOR ~ (
   LEFTARG   = box2d,
   RIGHTARG  = box2d,
   PROCEDURE = contains,
-  COMMUTATOR = @,
-  RESTRICT   = contsel
+  COMMUTATOR = @
 );
 
 CREATE OPERATOR &&& (

@@ -66,8 +66,7 @@ Datum contains_box2d_geom(PG_FUNCTION_ARGS)
 	const GBOX *gbox = lwgeom_get_bbox(lwgeom);
 	bool result = TRUE;
 	if((BOX_xmin(box_a) > gbox->xmin) || (BOX_xmax(box_a) < gbox->xmax) ||
-			(BOX_ymin(box_a) > gbox->ymin) || (BOX_ymax(box_a) < gbox->ymax) ||
-			(BOX_zmin(box_a) > gbox->zmin) || (BOX_zmax(box_a) < gbox->zmax)){
+			(BOX_ymin(box_a) > gbox->ymin) || (BOX_ymax(box_a) < gbox->ymax)){
 		result = FALSE;
 	}
 	lwgeom_free(lwgeom);
@@ -84,8 +83,7 @@ Datum is_contained_box2d_geom(PG_FUNCTION_ARGS)
 	const GBOX *gbox = lwgeom_get_bbox(lwgeom);
 	bool result = TRUE;
 	if((BOX_xmin(box_a) < gbox->xmin) || (BOX_xmax(box_a) > gbox->xmax) ||
-			(BOX_ymin(box_a) < gbox->ymin) || (BOX_ymax(box_a) > gbox->ymax) ||
-			(BOX_zmin(box_a) < gbox->zmin) || (BOX_zmax(box_a) > gbox->zmax)){
+			(BOX_ymin(box_a) < gbox->ymin) || (BOX_ymax(box_a) > gbox->ymax)){
 		result = FALSE;
 	}
 	lwgeom_free(lwgeom);
@@ -102,8 +100,7 @@ Datum overlaps_box2d_geom(PG_FUNCTION_ARGS)
 	const GBOX *gbox = lwgeom_get_bbox(lwgeom);
 	bool result = TRUE;
 	if((BOX_xmin(box_a) > gbox->xmax) || (BOX_xmax(box_a) < gbox->xmin) ||
-			(BOX_ymin(box_a) > gbox->ymax) || (BOX_ymax(box_a) < gbox->ymin) ||
-			(BOX_zmin(box_a) > gbox->zmin) || (BOX_zmax(box_a) < gbox->zmin)){
+			(BOX_ymin(box_a) > gbox->ymax) || (BOX_ymax(box_a) < gbox->ymin)){
 		result = FALSE;
 	}
 	lwgeom_free(lwgeom);
