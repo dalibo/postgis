@@ -5482,21 +5482,21 @@ CREATE OPERATOR ~~ (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
   PROCEDURE  = contains,
-  COMMUTATOR = @
+  COMMUTATOR = @@
 );
 
 CREATE OPERATOR @@ (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
   PROCEDURE  = is_contained,
-  COMMUTATOR = ~
+  COMMUTATOR = ~~
 );
 
 CREATE OPERATOR &&& (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
   PROCEDURE  = overlaps,
-  COMMUTATOR = &&
+  COMMUTATOR = &&&
 );
 
 CREATE OR REPLACE FUNCTION contains(geometry, gidx)
@@ -5580,14 +5580,14 @@ $$ LANGUAGE SQL IMMUTABLE STRICT;
 CREATE OPERATOR ~~ (
   LEFTARG = geometry,
   RIGHTARG = gidx,
-  COMMUTATOR = @,
+  COMMUTATOR = @@,
   PROCEDURE  = contains
 );
 
 CREATE OPERATOR @@ (
   LEFTARG = geometry,
   RIGHTARG = gidx,
-  COMMUTATOR = ~,
+  COMMUTATOR = ~~,
   PROCEDURE = is_contained
 );
 
@@ -5595,42 +5595,42 @@ CREATE OPERATOR &&& (
   LEFTARG    = geometry,
   RIGHTARG   = gidx,
   PROCEDURE  = overlaps,
-  COMMUTATOR = &&
+  COMMUTATOR = &&&
 );
 
 CREATE OPERATOR &&& (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
   PROCEDURE = overlaps,
-  COMMUTATOR = &&
+  COMMUTATOR = &&&
 );
 
 CREATE OPERATOR @@ (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
   PROCEDURE = is_contained,
-  COMMUTATOR = ~
+  COMMUTATOR = ~~
 );
 
 CREATE OPERATOR ~~ (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
   PROCEDURE = contains,
-  COMMUTATOR = @
+  COMMUTATOR = @@
 );
 
 CREATE OPERATOR @@ (
   LEFTARG   = geometry,
   RIGHTARG  = geometry,
   PROCEDURE = geometry_within_3d,
-  COMMUTATOR = ~
+  COMMUTATOR = ~~
 );
 
 CREATE OPERATOR ~~ (
   LEFTARG   = geometry,
   RIGHTARG  = geometry,
   PROCEDURE = geometry_contains_3d,
-  COMMUTATOR = @
+  COMMUTATOR = @@
 );
 
 ------------------------------
