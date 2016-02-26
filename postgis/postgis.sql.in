@@ -5652,8 +5652,6 @@ CREATE OPERATOR CLASS brin_geometry_inclusion_ops_3d
   USING brin
   FAMILY brin_geometry_inclusion_family_3d AS
     OPERATOR      3        &&&(geometry, geometry),
-    OPERATOR      7        ~~(geometry, geometry),
-    OPERATOR      8        @@(geometry, geometry),
     FUNCTION      1        brin_inclusion_opcinfo(internal) ,
     FUNCTION      2        geom2d_brin_inclusion_add_value(internal, internal, internal, internal) ,
     FUNCTION      3        brin_inclusion_consistent(internal, internal, internal) ,
@@ -5662,16 +5660,10 @@ CREATE OPERATOR CLASS brin_geometry_inclusion_ops_3d
 
 ALTER OPERATOR FAMILY brin_geometry_inclusion_family_3d USING brin ADD
     OPERATOR      3         &&&(gidx, geometry),
-    OPERATOR      7         ~~(gidx, geometry),
-    OPERATOR      8         @@(gidx, geometry),
 
     OPERATOR      3         &&&(geometry, gidx),
-    OPERATOR      7         ~~(geometry, gidx),
-    OPERATOR      8         @@(geometry, gidx),
 
-    OPERATOR      3         &&&(gidx, gidx),
-    OPERATOR      7         ~~(gidx, gidx),
-    OPERATOR      8         @@(gidx, gidx);
+    OPERATOR      3         &&&(gidx, gidx);
 
 ---------------------------------------------------------------
 -- END
