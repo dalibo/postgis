@@ -48,6 +48,10 @@ geom3d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
  * As we index geometries but store a GIDX, we need to overload the original
  * brin_inclusion_add_value() function to be able to do this. Other original
  * mandatory support functions doesn't need to be overloaded.
+ *
+ * The previous limitation might be lifted, but we also eliminate some overhead
+ * by doing it this way, namely calling different functions through the
+ * FunctionCallInvoke machinery for each heap tuple.
  */
 Datum
 gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval, bool isnull, int ndims)
