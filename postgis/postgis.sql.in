@@ -5648,7 +5648,9 @@ CREATE OR REPLACE FUNCTION geom2d_brin_inclusion_add_value(internal, internal, i
 	LANGUAGE 'c';
 
 CREATE OPERATOR CLASS brin_geometry_inclusion_ops_2d
-  FOR TYPE geometry USING brin FAMILY brin_geometry_inclusion_family_2d AS
+  DEFAULT FOR TYPE geometry
+  USING brin
+  FAMILY brin_geometry_inclusion_family_2d AS
     OPERATOR      3        &&(geometry, geometry),
     OPERATOR      7        ~(geometry, geometry),
     OPERATOR      8        @(geometry, geometry),
@@ -5678,7 +5680,9 @@ ALTER OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin ADD
 CREATE OPERATOR FAMILY brin_geometry_inclusion_family_3d USING brin;
 
 CREATE OPERATOR CLASS brin_geometry_inclusion_ops_3d
-  FOR TYPE geometry USING brin FAMILY brin_geometry_inclusion_family_3d AS
+  FOR TYPE geometry
+  USING brin
+  FAMILY brin_geometry_inclusion_family_3d AS
     OPERATOR      3        &&&(geometry, geometry),
     OPERATOR      7        ~~(geometry, geometry),
     OPERATOR      8        @@(geometry, geometry),
