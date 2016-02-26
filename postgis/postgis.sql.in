@@ -5409,22 +5409,6 @@ CREATE OR REPLACE FUNCTION ST_InterpolatePoint(Line geometry, Point geometry)
 -- BRIN support                                               --
 --------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION geometry_contains_3d(geom1 geometry, geom2 geometry)
-RETURNS bool
-AS 'MODULE_PATHNAME', 'gserialized_contains'
-LANGUAGE 'c' IMMUTABLE STRICT;
-
-CREATE OR REPLACE FUNCTION geometry_within_3d(geom1 geometry, geom2 geometry)
-RETURNS bool
-AS 'MODULE_PATHNAME', 'gserialized_within'
-LANGUAGE 'c' IMMUTABLE STRICT;
-
-CREATE OR REPLACE FUNCTION geometry_same_3d(geom1 geometry, geom2 geometry)
-RETURNS bool
-AS 'MODULE_PATHNAME', 'gserialized_same'
-LANGUAGE 'c' IMMUTABLE STRICT;
-
-
 CREATE OR REPLACE FUNCTION contains(gidx, geometry)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_geom_contains'
@@ -5614,20 +5598,6 @@ CREATE OPERATOR ~~ (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
   PROCEDURE = contains,
-  COMMUTATOR = @@
-);
-
-CREATE OPERATOR @@ (
-  LEFTARG   = geometry,
-  RIGHTARG  = geometry,
-  PROCEDURE = geometry_within_3d,
-  COMMUTATOR = ~~
-);
-
-CREATE OPERATOR ~~ (
-  LEFTARG   = geometry,
-  RIGHTARG  = geometry,
-  PROCEDURE = geometry_contains_3d,
   COMMUTATOR = @@
 );
 
