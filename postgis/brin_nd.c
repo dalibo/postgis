@@ -53,7 +53,7 @@ Datum
 gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval, bool isnull, int ndims)
 {
 	GIDX * gidx_geom, *gidx_index;
-	int dims_to_copy, dims_geom, i;
+	int dims_geom, i;
 
 	Assert(ndims <= GIDX_MAX_DIM);
 
@@ -92,10 +92,9 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 		PG_RETURN_BOOL(true);
 	}
 
-	dims_to_copy = Min(ndims, dims_geom);
 	gidx_index = (GIDX *) column->bv_values[INCLUSION_UNION];
 
-	for ( i = 0; i < dims_to_copy; i++ )
+	for ( i = 0; i < ndims; i++ )
 	{
 		/* Adjust minimums */
 		GIDX_SET_MIN(gidx_index, i, Min(GIDX_GET_MIN(gidx_index,i),GIDX_GET_MIN(gidx_geom,i)));
