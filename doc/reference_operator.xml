@@ -255,7 +255,7 @@ FROM ( VALUES
 
 			<para>The <varname>&amp;&amp;</varname> operator returns <varname>TRUE</varname> if two 2D bounding boxes A and B intersect each other, using float precision. This means that if A (or B) is a (double precision) box2d, it will be internally converted to a float precision 2D bounding box (GIDX)</para>
 
-			<note><para>This operand is intended to be used internally by BRIN indexes, more
+			<note><para>This operator is intended to be used internally by BRIN indexes, more
 				than by users.</para></note>
 
 			<para>Availability: 2.3.0 support for Block Range INdexes (BRIN) was introduced.</para>
@@ -407,7 +407,7 @@ FROM ( VALUES
 
 			<para>The <varname>&amp;&amp;&amp;</varname> operator returns <varname>TRUE</varname> if the cached n-D bounding box of geometry A intersects the n-D bounding box B, using float precision. This means that if B is a (double precision) box3d, it will be internally converted to a float precision 3D bounding box (GIDX)</para>
 
-			<note><para>This operand is intended to be used internally by BRIN indexes, more
+			<note><para>This operator is intended to be used internally by BRIN indexes, more
 				than by users.</para></note>
 
 			<para>Availability: 2.3.0 support for Block Range INdexes (BRIN) was introduced.</para>
@@ -469,7 +469,7 @@ FROM ( VALUES
 
 			<para>The <varname>&amp;&amp;&amp;</varname> operator returns <varname>TRUE</varname> if the n-D bounding box A intersects the cached n-D bounding box of geometry B, using float precision. This means that if A is a (double precision) box3d, it will be internally converted to a float precision 3D bounding box (GIDX)</para>
 
-			<note><para>This operand is intended to be used internally by BRIN indexes, more
+			<note><para>This operator is intended to be used internally by BRIN indexes, more
 				than by users.</para></note>
 
 			<para>Availability: 2.3.0 support for Block Range INdexes (BRIN) was introduced.</para>
@@ -531,7 +531,7 @@ FROM ( VALUES
 
 			<para>The <varname>&amp;&amp;&amp;</varname> operator returns <varname>TRUE</varname> if two n-D bounding boxes A and B intersect each other, using float precision. This means that if A (or B) is a (double precision) box3d, it will be internally converted to a float precision 3D bounding box (GIDX)</para>
 
-			<note><para>This operand is intended to be used internally by BRIN indexes, more
+			<note><para>This operator is intended to be used internally by BRIN indexes, more
 				than by users.</para></note>
 
 			<para>Availability: 2.3.0 support for Block Range INdexes (BRIN) was introduced.</para>
