@@ -2196,11 +2196,11 @@ SELECT UPDATE_GEOMETRY_STATS([table_name], [column_name]);</programlisting></par
       size, and the penalty in write workload. Otherwise, BRIN index can be
       considered as an alternative.</para>
 
-      <para>The idea on BRIN index is to store only the bouding box englobing
-      all the geometries containsed in all the rows in a set of table blocks,
+      <para>The idea of a BRIN index is to store only the bouding box englobing
+      all the geometries contained in all the rows in a set of table blocks,
       called a range.  Obviously, this indexing method will only be efficient
-      if the data are physically ordered in a way that the resulting bouding
-      box will be mutually excluded. The resulting index will be really small,
+      if the data is physically ordered in a way where the resulting bouding
+      boxes for block ranges will be mutually exclusive. The resulting index will be really small,
       but will be less efficient than a GiST index in many cases.</para>
 
       <para>You can choose the number of blocks to summarize in a range. If you
