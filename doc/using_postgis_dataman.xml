@@ -2182,10 +2182,13 @@ SELECT UPDATE_GEOMETRY_STATS([table_name], [column_name]);</programlisting></par
 	  <title>BRIN Indexes</title>
 
 	  <para>BRIN stands for "Block Range Index" and is a generic form of
-      indexing. BRIN indexes are lossy, and their main usage is to provide
-      relatively performant index for big dataset. In addition to GIS indexing,
-      BRIN is used to speed up searches on various kinds of regular or
-      irregular data structures (integer, ranges etc).</para>
+	  indexing that has been introduced in PostgreSQL 9.5. BRIN is a lossy kind
+	  of index, and its main usage is to provide a compromise for both read and
+	  write performance. It's primary goal is to handle very large tables for
+	  which some of the columns have some natural correlation with their
+	  physical location within the table.  In addition to GIS indexing, BRIN is
+	  used to speed up searches on various kinds of regular or irregular data
+	  structures (integer, arrays etc).</para>
 
 	  <para>Once a GIS data table exceeds a few thousand rows, you will want
 	  to build an index to speed up spatial searches of the data (unless all
@@ -2194,14 +2197,21 @@ SELECT UPDATE_GEOMETRY_STATS([table_name], [column_name]);</programlisting></par
       performant as long as their size doesn't exceed the amount of RAM
       available for the database, and as long as you can afford the storage
       size, and the penalty in write workload. Otherwise, BRIN index can be
-      considered as an alternative.</para>
+      considered as an alternative. </para>
 
       <para>The idea of a BRIN index is to store only the bouding box englobing
       all the geometries contained in all the rows in a set of table blocks,
       called a range.  Obviously, this indexing method will only be efficient
       if the data is physically ordered in a way where the resulting bouding
-      boxes for block ranges will be mutually exclusive. The resulting index will be really small,
-      but will be less efficient than a GiST index in many cases.</para>
+      boxes for block ranges will be mutually exclusive. The resulting index
+      will be really small, but will be less efficient than a GiST index in
+      many cases.</para>
+
+	  <para>Building a BRIN index is way less intensive than building a GiST
+	  index. It's quite common to build a BRIN index in more than ten time less
+	  than a GiST index would have required. As a BRIN index only store one
+	  bouding box for one to many table blocks, it's pretty common to consume
+	  up to a thousand time less disk space for this kind of indexes.</para>
 
       <para>You can choose the number of blocks to summarize in a range. If you
       decrease this number, the index will be bigger but will probably help to
