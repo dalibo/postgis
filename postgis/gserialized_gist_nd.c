@@ -488,6 +488,7 @@ gserialized_datum_predicate(Datum gs1, Datum gs2, gidx_predicate predicate)
 	return LW_FALSE;
 }
 
+#if POSTGIS_PGSQL_VERSION >= 95
 static int
 gserialized_datum_predicate_gidx_geom(GIDX *gidx1, Datum gs2, gidx_predicate predicate)
 {
@@ -507,6 +508,7 @@ gserialized_datum_predicate_gidx_geom(GIDX *gidx1, Datum gs2, gidx_predicate pre
    }
    return LW_FALSE;
 }
+#endif
 
 static int
 gserialized_datum_predicate_geom_gidx(Datum gs1, GIDX *gidx2, gidx_predicate predicate)
