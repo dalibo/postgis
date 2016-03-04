@@ -5410,32 +5410,32 @@ CREATE OR REPLACE FUNCTION ST_InterpolatePoint(Line geometry, Point geometry)
 -- BRIN support                                               --
 --------------------------------------------------------------------
 
-CREATE OR REPLACE FUNCTION contains(gidx, geometry)
+CREATE OR REPLACE FUNCTION contains_2d(gidx, geometry)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_geom_contains'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION is_contained(gidx, geometry)
+CREATE OR REPLACE FUNCTION is_contained_2d(gidx, geometry)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_geom_within'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION overlaps(gidx, geometry)
+CREATE OR REPLACE FUNCTION overlaps_2d(gidx, geometry)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_geom_overlaps'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION overlaps(gidx, gidx)
+CREATE OR REPLACE FUNCTION overlaps_2d(gidx, gidx)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_gidx_overlaps'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION contains(gidx, gidx)
+CREATE OR REPLACE FUNCTION contains_2d(gidx, gidx)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_gidx_contains'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION is_contained(gidx, gidx)
+CREATE OR REPLACE FUNCTION is_contained_2d(gidx, gidx)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_gidx_within'
 LANGUAGE 'c' IMMUTABLE STRICT;
@@ -5444,7 +5444,7 @@ LANGUAGE 'c' IMMUTABLE STRICT;
 CREATE OPERATOR ~ (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
-  PROCEDURE  = contains,
+  PROCEDURE  = contains_2d,
   COMMUTATOR = @
 );
 
@@ -5452,7 +5452,7 @@ CREATE OPERATOR ~ (
 CREATE OPERATOR @ (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
-  PROCEDURE  = is_contained,
+  PROCEDURE  = is_contained_2d,
   COMMUTATOR = ~
 );
 
@@ -5460,7 +5460,7 @@ CREATE OPERATOR @ (
 CREATE OPERATOR && (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
-  PROCEDURE  = overlaps,
+  PROCEDURE  = overlaps_2d,
   COMMUTATOR = &&
 );
 
@@ -5488,19 +5488,19 @@ CREATE OPERATOR &&& (
   COMMUTATOR = &&&
 );
 
-CREATE OR REPLACE FUNCTION contains(geometry, gidx)
+CREATE OR REPLACE FUNCTION contains_2d(geometry, gidx)
 RETURNS boolean
 AS $$
   SELECT $2 @ $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION is_contained(geometry, gidx)
+CREATE OR REPLACE FUNCTION is_contained_2d(geometry, gidx)
 RETURNS boolean
 AS $$
   SELECT $2 ~ $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
-CREATE OR REPLACE FUNCTION overlaps(geometry, gidx)
+CREATE OR REPLACE FUNCTION overlaps_2d(geometry, gidx)
 RETURNS boolean
 AS $$
   SELECT $2 && $1;
@@ -5511,7 +5511,7 @@ CREATE OPERATOR ~ (
   LEFTARG = geometry,
   RIGHTARG = gidx,
   COMMUTATOR = @,
-  PROCEDURE  = contains
+  PROCEDURE  = contains_2d
 );
 
 -- Availability: 2.3.0
@@ -5519,14 +5519,14 @@ CREATE OPERATOR @ (
   LEFTARG = geometry,
   RIGHTARG = gidx,
   COMMUTATOR = ~,
-  PROCEDURE = is_contained
+  PROCEDURE = is_contained_2d
 );
 
 -- Availability: 2.3.0
 CREATE OPERATOR && (
   LEFTARG    = geometry,
   RIGHTARG   = gidx,
-  PROCEDURE  = overlaps,
+  PROCEDURE  = overlaps_2d,
   COMMUTATOR = &&
 );
 
@@ -5534,7 +5534,7 @@ CREATE OPERATOR && (
 CREATE OPERATOR && (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
-  PROCEDURE = overlaps,
+  PROCEDURE = overlaps_2d,
   COMMUTATOR = &&
 );
 
@@ -5542,7 +5542,7 @@ CREATE OPERATOR && (
 CREATE OPERATOR @ (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
-  PROCEDURE = is_contained,
+  PROCEDURE = is_contained_2d,
   COMMUTATOR = ~
 );
 
@@ -5550,7 +5550,7 @@ CREATE OPERATOR @ (
 CREATE OPERATOR ~ (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
-  PROCEDURE = contains,
+  PROCEDURE = contains_2d,
   COMMUTATOR = @
 );
 
