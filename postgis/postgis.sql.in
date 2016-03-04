@@ -5439,6 +5439,7 @@ RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_gidx_within'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OPERATOR ~ (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
@@ -5446,6 +5447,7 @@ CREATE OPERATOR ~ (
   COMMUTATOR = @
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR @ (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
@@ -5453,6 +5455,7 @@ CREATE OPERATOR @ (
   COMMUTATOR = ~
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR && (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
@@ -5460,6 +5463,7 @@ CREATE OPERATOR && (
   COMMUTATOR = &&
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR ~~ (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
@@ -5467,6 +5471,7 @@ CREATE OPERATOR ~~ (
   COMMUTATOR = @@
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR @@ (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
@@ -5474,6 +5479,7 @@ CREATE OPERATOR @@ (
   COMMUTATOR = ~~
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR &&& (
   LEFTARG    = gidx,
   RIGHTARG   = geometry,
@@ -5499,6 +5505,7 @@ AS $$
   SELECT $2 && $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OPERATOR ~ (
   LEFTARG = geometry,
   RIGHTARG = gidx,
@@ -5506,6 +5513,7 @@ CREATE OPERATOR ~ (
   PROCEDURE  = contains
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR @ (
   LEFTARG = geometry,
   RIGHTARG = gidx,
@@ -5513,6 +5521,7 @@ CREATE OPERATOR @ (
   PROCEDURE = is_contained
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR && (
   LEFTARG    = geometry,
   RIGHTARG   = gidx,
@@ -5520,6 +5529,7 @@ CREATE OPERATOR && (
   COMMUTATOR = &&
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR && (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
@@ -5527,6 +5537,7 @@ CREATE OPERATOR && (
   COMMUTATOR = &&
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR @ (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
@@ -5534,6 +5545,7 @@ CREATE OPERATOR @ (
   COMMUTATOR = ~
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR ~ (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
@@ -5559,6 +5571,7 @@ AS $$
   SELECT $2 &&& $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OPERATOR ~~ (
   LEFTARG = geometry,
   RIGHTARG = gidx,
@@ -5566,6 +5579,7 @@ CREATE OPERATOR ~~ (
   PROCEDURE  = contains
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR @@ (
   LEFTARG = geometry,
   RIGHTARG = gidx,
@@ -5573,6 +5587,7 @@ CREATE OPERATOR @@ (
   PROCEDURE = is_contained
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR &&& (
   LEFTARG    = geometry,
   RIGHTARG   = gidx,
@@ -5580,6 +5595,7 @@ CREATE OPERATOR &&& (
   COMMUTATOR = &&&
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR &&& (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
@@ -5587,6 +5603,7 @@ CREATE OPERATOR &&& (
   COMMUTATOR = &&&
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR @@ (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
@@ -5594,6 +5611,7 @@ CREATE OPERATOR @@ (
   COMMUTATOR = ~~
 );
 
+-- Availability: 2.3.0
 CREATE OPERATOR ~~ (
   LEFTARG   = gidx,
   RIGHTARG  = gidx,
@@ -5615,6 +5633,7 @@ CREATE OR REPLACE FUNCTION geom2d_brin_inclusion_add_value(internal, internal, i
 	AS 'MODULE_PATHNAME','geom2d_brin_inclusion_add_value'
 	LANGUAGE 'c';
 
+-- Availability: 2.3.0
 CREATE OPERATOR CLASS brin_geometry_inclusion_ops_2d
   DEFAULT FOR TYPE geometry
   USING brin
@@ -5647,6 +5666,7 @@ ALTER OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin ADD
 
 CREATE OPERATOR FAMILY brin_geometry_inclusion_family_3d USING brin;
 
+-- Availability: 2.3.0
 CREATE OPERATOR CLASS brin_geometry_inclusion_ops_3d
   FOR TYPE geometry
   USING brin
