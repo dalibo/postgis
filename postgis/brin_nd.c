@@ -1,3 +1,5 @@
+#if POSTGIS_PGSQL_VERSION >= 95
+
 #include "postgres.h"
 #include "fmgr.h"
 
@@ -109,3 +111,5 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 
 	PG_RETURN_BOOL(false);
 }
+
+#endif

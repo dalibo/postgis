@@ -100,14 +100,20 @@ Datum gserialized_gist_geog_distance(PG_FUNCTION_ARGS);
 */
 Datum gserialized_overlaps(PG_FUNCTION_ARGS);
 Datum gserialized_contains(PG_FUNCTION_ARGS);
+#if POSTGIS_PGSQL_VERSION >= 95
 Datum gserialized_gidx_geom_contains(PG_FUNCTION_ARGS);
 Datum gserialized_gidx_gidx_contains(PG_FUNCTION_ARGS);
+#endif
 Datum gserialized_within(PG_FUNCTION_ARGS);
+#if POSTGIS_PGSQL_VERSION >= 95
 Datum gserialized_gidx_geom_within(PG_FUNCTION_ARGS);
 Datum gserialized_gidx_gidx_within(PG_FUNCTION_ARGS);
+#endif
 Datum gserialized_distance_nd(PG_FUNCTION_ARGS);
+#if POSTGIS_PGSQL_VERSION >= 95
 Datum gserialized_gidx_geom_same(PG_FUNCTION_ARGS);
 Datum gserialized_gidx_gidx_same(PG_FUNCTION_ARGS);
+#endif
 
 /*
 ** GIDX true/false test function type
@@ -853,6 +859,7 @@ Datum gserialized_within(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
+#if POSTGIS_PGSQL_VERSION >= 95
 /*
 ** '~' and operator function. Based on a GIDX and a serialized return true if
 ** the first is contained by the second.
@@ -880,6 +887,7 @@ Datum gserialized_gidx_gidx_within(PG_FUNCTION_ARGS)
 
    PG_RETURN_BOOL(FALSE);
 }
+#endif
 
 /*
 ** '@' and operator function. Based on two serialized return true if
@@ -896,6 +904,7 @@ Datum gserialized_contains(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
+#if POSTGIS_PGSQL_VERSION >= 95
 /*
 ** '@' and operator function. Based on a GIDX and a serialized return true if
 ** the first contains the second.
@@ -943,6 +952,7 @@ Datum gserialized_gidx_gidx_same(PG_FUNCTION_ARGS)
 
    PG_RETURN_BOOL(FALSE);
 }
+#endif
 
 /*
 ** '&&' operator function. Based on two serialized return true if
@@ -959,6 +969,7 @@ Datum gserialized_overlaps(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
+#if POSTGIS_PGSQL_VERSION >= 95
 PG_FUNCTION_INFO_V1(gserialized_gidx_geom_overlaps);
 Datum gserialized_gidx_geom_overlaps(PG_FUNCTION_ARGS)
 {
@@ -978,6 +989,7 @@ Datum gserialized_gidx_gidx_overlaps(PG_FUNCTION_ARGS)
 
    PG_RETURN_BOOL(FALSE);
 }
+#endif
 
 /***********************************************************************
 * GiST Index  Support Functions
