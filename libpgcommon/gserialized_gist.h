@@ -95,5 +95,6 @@ GSERIALIZED* gserialized_set_gidx(GSERIALIZED *g, GIDX *gidx);
 /* Remove the box from a disk serialization */
 GSERIALIZED* gserialized_drop_gidx(GSERIALIZED *g);
 
+int gserialized_datum_get_box2df_p(Datum gsdatum, BOX2DF *box2df);
 
 

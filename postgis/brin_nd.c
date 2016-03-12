@@ -1,6 +1,7 @@
-#if POSTGIS_PGSQL_VERSION >= 95
-
 #include "postgres.h"
+
+#if PG_VERSION_NUM >= 90500
+
 #include "fmgr.h"
 
 #include "../postgis_config.h"
@@ -37,7 +38,7 @@ PG_FUNCTION_INFO_V1(geom2d_brin_inclusion_add_value);
 Datum
 geom2d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 {
-	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
+	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0); /* not needed */
 	BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
 	Datum newval = PG_GETARG_DATUM(2);
 	bool		isnull = PG_GETARG_BOOL(3);
@@ -58,7 +59,7 @@ geom2d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 	/* if the recorded value is null, we just need to store the box2df */
 	if (column->bv_allnulls)
 	{
-		column->bv_values[INCLUSION_UNION] = datumCopy((Datum) box_geom, false,
+		column->bv_values[INCLUSION_UNION] = datumCopy((Datum) &box_geom, false,
 				sizeof(BOX2DF));
 		column->bv_values[INCLUSION_UNMERGEABLE] = BoolGetDatum(false);
 		column->bv_values[INCLUSION_CONTAINS_EMPTY] = BoolGetDatum(false);
@@ -85,12 +86,13 @@ PG_FUNCTION_INFO_V1(geom3d_brin_inclusion_add_value);
 Datum
 geom3d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 {
-	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
+	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0); /* not needed */
 	BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
 	Datum newval = PG_GETARG_DATUM(2);
 	bool		isnull = PG_GETARG_BOOL(3);
 	GIDX * gidx_geom, *gidx_index;
 	int dims_geom, i;
+	int ndims = 4; /* FIXME */
 
 	Assert(ndims <= GIDX_MAX_DIM);
 

@@ -541,7 +541,7 @@ static double box2df_distance(const BOX2DF *a, const BOX2DF *b)
 * full object and return the box based on that. If no box is available,
 * return #LW_FAILURE, otherwise #LW_SUCCESS.
 */
-static int
+int
 gserialized_datum_get_box2df_p(Datum gsdatum, BOX2DF *box2df)
 {
 	GSERIALIZED *gpart;
