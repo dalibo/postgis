@@ -23,6 +23,7 @@ POSTGIS_MAJOR_VERSION=@POSTGIS_MAJOR_VERSION@
 POSTGIS_MINOR_VERSION=@POSTGIS_MINOR_VERSION@
 HAVE_JSON=@HAVE_JSON@
 HAVE_SFCGAL=@HAVE_SFCGAL@
+HAVE_BRIN=@HAVE_BRIN@
 MINGWBUILD=@MINGWBUILD@
 INTERRUPTTESTS=@INTERRUPTTESTS@
 
@@ -45,6 +46,10 @@ REGRESS_INSTALLDIR=$(srcdir)/00-regress-install
 #
 PATH := $(PGSQL_BINDIR):$(PATH)
 export PATH
+
+ifeq (@HAVE_BRIN@,yes)
+BRIN_OBJ= regres_brin_index
+endif
 
 
 TESTS = \
@@ -107,7 +112,7 @@ TESTS = \
 	postgis_type_name \
 	regress \
 	regress_bdpoly \
-	regress_index \
+	$(BRIN_OBJ) \
 	regress_index_nulls \
 	regress_management \
 	regress_selectivity \
