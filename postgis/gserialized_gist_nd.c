@@ -100,17 +100,17 @@ Datum gserialized_gist_geog_distance(PG_FUNCTION_ARGS);
 */
 Datum gserialized_overlaps(PG_FUNCTION_ARGS);
 Datum gserialized_contains(PG_FUNCTION_ARGS);
-#if POSTGIS_PGSQL_VERSION >= 95
+#if HAVE_BRIN == yes
 Datum gserialized_gidx_geom_contains(PG_FUNCTION_ARGS);
 Datum gserialized_gidx_gidx_contains(PG_FUNCTION_ARGS);
 #endif
 Datum gserialized_within(PG_FUNCTION_ARGS);
-#if POSTGIS_PGSQL_VERSION >= 95
+#if HAVE_BRIN == yes
 Datum gserialized_gidx_geom_within(PG_FUNCTION_ARGS);
 Datum gserialized_gidx_gidx_within(PG_FUNCTION_ARGS);
 #endif
 Datum gserialized_distance_nd(PG_FUNCTION_ARGS);
-#if POSTGIS_PGSQL_VERSION >= 95
+#if HAVE_BRIN == yes
 Datum gserialized_gidx_geom_same(PG_FUNCTION_ARGS);
 Datum gserialized_gidx_gidx_same(PG_FUNCTION_ARGS);
 #endif
@@ -488,7 +488,7 @@ gserialized_datum_predicate(Datum gs1, Datum gs2, gidx_predicate predicate)
 	return LW_FALSE;
 }
 
-#if POSTGIS_PGSQL_VERSION >= 95
+#if HAVE_BRIN == yes
 static int
 gserialized_datum_predicate_gidx_geom(GIDX *gidx1, Datum gs2, gidx_predicate predicate)
 {
@@ -861,7 +861,7 @@ Datum gserialized_within(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
-#if POSTGIS_PGSQL_VERSION >= 95
+#if HAVE_BRIN == yes
 /*
 ** '~' and operator function. Based on a GIDX and a serialized return true if
 ** the first is contained by the second.
@@ -906,7 +906,7 @@ Datum gserialized_contains(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
-#if POSTGIS_PGSQL_VERSION >= 95
+#if HAVE_BRIN == yes
 /*
 ** '@' and operator function. Based on a GIDX and a serialized return true if
 ** the first contains the second.
@@ -971,7 +971,7 @@ Datum gserialized_overlaps(PG_FUNCTION_ARGS)
 	PG_RETURN_BOOL(FALSE);
 }
 
-#if POSTGIS_PGSQL_VERSION >= 95
+#if HAVE_BRIN == yes
 PG_FUNCTION_INFO_V1(gserialized_gidx_geom_overlaps);
 Datum gserialized_gidx_geom_overlaps(PG_FUNCTION_ARGS)
 {
