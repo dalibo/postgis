@@ -5554,31 +5554,37 @@ CREATE OR REPLACE FUNCTION ST_InterpolatePoint(Line geometry, Point geometry)
 -- 2d operators                --
 ---------------------------------
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION contains_2d(box2df, geometry)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_contains_box2df_geom_2d'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION is_contained_2d(box2df, geometry)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_within_box2df_geom_2d'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION overlaps_2d(box2df, geometry)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_overlaps_box2df_geom_2d'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION overlaps_2d(box2df, box2df)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_contains_box2df_box2df_2d'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION contains_2d(box2df, box2df)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_contains_box2df_box2df_2d'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION is_contained_2d(box2df, box2df)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_contains_box2df_box2df_2d'
@@ -5608,18 +5614,21 @@ CREATE OPERATOR && (
   COMMUTATOR = &&
 );
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION contains_2d(geometry, box2df)
 RETURNS boolean
 AS $$
   SELECT $2 @ $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION is_contained_2d(geometry, box2df)
 RETURNS boolean
 AS $$
   SELECT $2 ~ $1;
 $$ LANGUAGE SQL IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION overlaps_2d(geometry, box2df)
 RETURNS boolean
 AS $$
@@ -5678,11 +5687,13 @@ CREATE OPERATOR ~ (
 -- nd operators           --
 ----------------------------
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION overlaps_nd(gidx, geometry)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_geom_overlaps'
 LANGUAGE 'c' IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION overlaps_nd(gidx, gidx)
 RETURNS boolean
 AS 'MODULE_PATHNAME','gserialized_gidx_gidx_overlaps'
@@ -5696,12 +5707,14 @@ CREATE OPERATOR &&& (
   COMMUTATOR = &&&
 );
 
+-- Availability: 2.3.0
 --CREATE OR REPLACE FUNCTION contains_nd(geometry, gidx)
 --RETURNS boolean
 --AS $$
 --  SELECT $2 @@ $1;
 --$$ LANGUAGE SQL IMMUTABLE STRICT;
 
+-- Availability: 2.3.0
 --CREATE OR REPLACE FUNCTION is_contained_nd(geometry, gidx)
 --RETURNS boolean
 --AS $$
@@ -5724,6 +5737,7 @@ CREATE OPERATOR &&& (
 --  COMMUTATOR = ~~
 --);
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION overlaps_nd(geometry, gidx)
 RETURNS boolean
 AS $$
@@ -5788,10 +5802,12 @@ CREATE OPERATOR &&& (
 
 CREATE OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin;
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION geom2d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS bool 
 	AS 'MODULE_PATHNAME','geom2d_brin_inclusion_add_value'
 	LANGUAGE 'c';
 
+-- Availability: 2.3.0
 CREATE OR REPLACE FUNCTION geomnd_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS bool 
 	AS 'MODULE_PATHNAME','geomnd_brin_inclusion_add_value'
 	LANGUAGE 'c';
