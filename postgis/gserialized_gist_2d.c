@@ -631,7 +631,7 @@ gserialized_datum_predicate_2d(Datum gs1, Datum gs2, box2df_predicate predicate)
 }
 
 #if HAVE_BRIN == yes
-static int 
+static int
 gserialized_datum_predicate_box2df_geom_2d(const BOX2DF *br1, Datum gs2, box2df_predicate predicate)
 {
 	BOX2DF b2, *br2=NULL;
