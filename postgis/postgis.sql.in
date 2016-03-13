@@ -5660,6 +5660,7 @@ CREATE OPERATOR &&& (
 -- 2D case --
 -------------
 
+-- Availability: 2.3.0
 CREATE OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin;
 
 -- Availability: 2.3.0
@@ -5704,6 +5705,7 @@ ALTER OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin ADD
 -- 3D case --
 -------------
 
+-- Availability: 2.3.0
 CREATE OPERATOR FAMILY brin_geometry_inclusion_family_nd USING brin;
 
 -- Availability: 2.3.0
