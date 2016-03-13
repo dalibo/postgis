@@ -5652,8 +5652,8 @@ CREATE OR REPLACE FUNCTION geom2d_brin_inclusion_add_value(internal, internal, i
 	AS 'MODULE_PATHNAME','geom2d_brin_inclusion_add_value'
 	LANGUAGE 'c';
 
-CREATE OR REPLACE FUNCTION geom3d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS bool 
-	AS 'MODULE_PATHNAME','geom3d_brin_inclusion_add_value'
+CREATE OR REPLACE FUNCTION geomnd_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS bool 
+	AS 'MODULE_PATHNAME','geomnd_brin_inclusion_add_value'
 	LANGUAGE 'c';
 
 
@@ -5697,7 +5697,7 @@ CREATE OPERATOR CLASS brin_geometry_inclusion_ops_nd
   FAMILY brin_geometry_inclusion_family_nd AS
     OPERATOR      3        &&&(geometry, geometry),
     FUNCTION      1        brin_inclusion_opcinfo(internal) ,
-    FUNCTION      2        geom3d_brin_inclusion_add_value(internal, internal, internal, internal) ,
+    FUNCTION      2        geomnd_brin_inclusion_add_value(internal, internal, internal, internal) ,
     FUNCTION      3        brin_inclusion_consistent(internal, internal, internal) ,
     FUNCTION      4        brin_inclusion_union(internal, internal, internal) ,
   STORAGE gidx;
