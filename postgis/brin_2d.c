@@ -15,7 +15,6 @@ PG_FUNCTION_INFO_V1(geom2d_brin_inclusion_add_value);
 Datum
 geom2d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 {
-	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0); /* not needed */
 	BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
 	Datum newval = PG_GETARG_DATUM(2);
 	bool		isnull = PG_GETARG_BOOL(3);
