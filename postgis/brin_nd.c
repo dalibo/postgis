@@ -18,12 +18,12 @@ PG_FUNCTION_INFO_V1(geom3d_brin_inclusion_add_value);
 Datum
 geom3d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 {
-	BrinDesc   *desc = (BrinDesc *) PG_GETARG_POINTER(0);
+	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
 	BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
 	Datum newval = PG_GETARG_DATUM(2);
 	bool		isnull = PG_GETARG_BOOL(3);
 
-	PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdescn column, newval, isnull,
+	PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdesc, column, newval, isnull,
 				3));
 }
 
@@ -31,12 +31,12 @@ PG_FUNCTION_INFO_V1(geom4d_brin_inclusion_add_value);
 Datum
 geom4d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 {
-	BrinDesc   *desc = (BrinDesc *) PG_GETARG_POINTER(0);
+	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
 	BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
 	Datum newval = PG_GETARG_DATUM(2);
 	bool		isnull = PG_GETARG_BOOL(3);
 
-	PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdescn column, newval, isnull,
+	PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdesc, column, newval, isnull,
 				4));
 }
 
@@ -74,12 +74,12 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 		 * less dimensions, we set them to zero
 		 */
 		if (dims_geom != dims_wanted)
-			SET_VARSIZE(a, VARHDRSZ + dims_wanted * 2 * sizeof(float));
+			SET_VARSIZE(gidx_geom, VARHDRSZ + dims_wanted * 2 * sizeof(float));
 		if (dims_geom < dims_wanted)
-			for (i = dims_geom, i < dims_wanted; i++)
+			for (i = dims_geom; i < dims_wanted; i++)
 			{
-				GIDX_SET_MIN(gidx_index, i, 0);
-				GIDX_SET_MAX(gidx_index, i, 0);
+				GIDX_SET_MIN(gidx_geom, i, 0);
+				GIDX_SET_MAX(gidx_geom, i, 0);
 			}
 		{
 		}
@@ -96,9 +96,9 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 	for ( i = 0; i < dims_wanted; i++ )
 	{
 		/* Adjust minimums */
-		GIDX_SET_MIN(gidx_index, i, Min(GIDX_GET_MIN(gidx_index,i),GIDX_GET_MIN(gidx_geom,i)));
+		GIDX_SET_MIN(gidx_key, i, Min(GIDX_GET_MIN(gidx_key,i),GIDX_GET_MIN(gidx_geom,i)));
 		/* Adjust maximums */
-		GIDX_SET_MAX(gidx_index, i, Max(GIDX_GET_MAX(gidx_index,i),GIDX_GET_MAX(gidx_geom,i)));
+		GIDX_SET_MAX(gidx_key, i, Max(GIDX_GET_MAX(gidx_key,i),GIDX_GET_MAX(gidx_geom,i)));
 	}
 
 	PG_RETURN_BOOL(false);
