@@ -48,6 +48,8 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 	GIDX *gidx_geom, *gidx_key;
 	int dims_geom, i;
 
+	Assert(dims_wanted <= GIDX_MAX_DIM);
+
 	if (isnull)
 	{
 		if (column->bv_hasnulls)
