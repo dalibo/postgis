@@ -59,6 +59,7 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 		PG_RETURN_BOOL(true);
 	}
 
+	/* create a new GIDX in stack memory, maximum dimensions */
 	gidx_geom = (GIDX *) gboxmem;
 
 	if(gserialized_datum_get_gidx_p(newval, gidx_geom) == LW_FAILURE)
@@ -70,11 +71,18 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 	if (column->bv_allnulls)
 	{
 		/*
-		 * We have to make sure we store a 3D GIDX. If the original geometry has
-		 * less dimensions, we set them to zero
+		 * We have to make sure we store a GIDX of wanted dimension. If the
+		 * original geometry has less dimensions, we zero them in the GIDX. If
+		 * the original geometry has more, we ignore them.
 		 */
 		if (dims_geom != dims_wanted)
+		{
+			/*
+			 * This is safe because the GIDX was created with the maximum number
+			 * of dimension a GIDX can contain
+			 */
 			SET_VARSIZE(gidx_geom, VARHDRSZ + dims_wanted * 2 * sizeof(float));
+		}
 		if (dims_geom < dims_wanted)
 			for (i = dims_geom; i < dims_wanted; i++)
 			{
@@ -96,9 +104,11 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 	for ( i = 0; i < dims_wanted; i++ )
 	{
 		/* Adjust minimums */
-		GIDX_SET_MIN(gidx_key, i, Min(GIDX_GET_MIN(gidx_key,i),GIDX_GET_MIN(gidx_geom,i)));
+		GIDX_SET_MIN(gidx_key, i,
+				Min(GIDX_GET_MIN(gidx_key,i),GIDX_GET_MIN(gidx_geom,i)));
 		/* Adjust maximums */
-		GIDX_SET_MAX(gidx_key, i, Max(GIDX_GET_MAX(gidx_key,i),GIDX_GET_MAX(gidx_geom,i)));
+		GIDX_SET_MAX(gidx_key, i,
+				Max(GIDX_GET_MAX(gidx_key,i),GIDX_GET_MAX(gidx_geom,i)));
 	}
 
 	PG_RETURN_BOOL(false);
