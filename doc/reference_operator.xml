@@ -90,7 +90,7 @@ FROM ( VALUES
 				<xref linkend="ST_Geometry_Contained" /></para>
 		  </refsection>
 		</refentry>
-	
+
 		<refentry id="overlaps_geometry_gidx">
 		  <refnamediv>
 			<refname>&amp;&amp;(geometry,gidx)</refname>
@@ -156,7 +156,7 @@ FROM ( VALUES
 				<xref linkend="is_contained_gidx_gidx" /></para>
 		  </refsection>
 		</refentry>
-	
+
 		<refentry id="overlaps_gidx_geometry">
 		  <refnamediv>
 			<refname>&amp;&amp;(gidx,geometry)</refname>
@@ -977,7 +977,7 @@ FROM
 
 			<caution><para>This operand will NOT make use of any indexes that may be available on the
 				geometries.</para></caution>
-				
+
 			<para>&curve_support;</para>
 			<para>&P_support;</para>
 			<para>Changed:  2.0.0 , the bounding box of geometries was changed to use double precision instead of float4 precision of
@@ -1020,7 +1020,7 @@ GROUP BY column1;
 -- In versions prior to 2.0, this used to return true --
  SELECT ST_GeomFromText('POINT(1707296.37 4820536.77)') =
 	ST_GeomFromText('POINT(1707296.27 4820536.87)') As pt_intersect;
-	
+
 --pt_intersect --
 f
 </programlisting>
