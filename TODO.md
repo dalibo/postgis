@@ -11,7 +11,8 @@ them? If we remove them, documentation needs to be updated
 
 Julien: I think they should be kept, since they rely on postgis (GIDX) internal
 
-- add/fix the _3d and _4d opclasses
+- check the 3d opclasses
+- add 4d opclass
 - add a _nd opclass, and and _nd brin add value function
 
 General
