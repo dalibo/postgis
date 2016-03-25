@@ -5602,17 +5602,17 @@ CREATE OPERATOR &&& (
 CREATE OPERATOR FAMILY brin_geometry_inclusion_family_2d USING brin;
 
 -- Availability: 2.3.0
-CREATE OR REPLACE FUNCTION geom2d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS bool
+CREATE OR REPLACE FUNCTION geom2d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS boolean
 	AS 'MODULE_PATHNAME','geom2d_brin_inclusion_add_value'
 	LANGUAGE 'c';
 
 -- Availability: 2.3.0
-CREATE OR REPLACE FUNCTION geom3d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS bool
+CREATE OR REPLACE FUNCTION geom3d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS boolean
 	AS 'MODULE_PATHNAME','geom3d_brin_inclusion_add_value'
 	LANGUAGE 'c';
 
 -- Availability: 2.3.0
-CREATE OR REPLACE FUNCTION geom4d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS bool
+CREATE OR REPLACE FUNCTION geom4d_brin_inclusion_add_value(internal, internal, internal, internal) RETURNS boolean
 	AS 'MODULE_PATHNAME','geom4d_brin_inclusion_add_value'
 	LANGUAGE 'c';
 
