@@ -47,10 +47,6 @@ REGRESS_INSTALLDIR=$(srcdir)/00-regress-install
 PATH := $(PGSQL_BINDIR):$(PATH)
 export PATH
 
-ifeq (@HAVE_BRIN@,yes)
-BRIN_OBJ= regres_brin_index
-endif
-
 
 TESTS = \
 	loader/Point \
@@ -112,7 +108,7 @@ TESTS = \
 	postgis_type_name \
 	regress \
 	regress_bdpoly \
-	$(BRIN_OBJ) \
+	regress_index \
 	regress_index_nulls \
 	regress_management \
 	regress_selectivity \
@@ -234,6 +230,11 @@ ifeq ($(HAVE_JSON),yes)
 	# ST_GeomFromGeoJSON()
 	TESTS += \
 		in_geojson
+endif
+
+ifeq ($(HAVE_BRIN),yes)
+	TESTS += \
+		regress_brin_index
 endif
 
 ifeq ($(HAVE_SFCGAL),yes)
