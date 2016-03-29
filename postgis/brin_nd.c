@@ -65,6 +65,7 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 	if(gserialized_datum_get_gidx_p(newval, gidx_geom) == LW_FAILURE)
 		elog(ERROR, "Error while extracting the gidx from the geom");
 
+	/* Get the actual dimension of the geometry */
 	dims_geom = GIDX_NDIMS(gidx_geom);
 
 	/* if the recorded value is null, we just need to store the GIDX */
@@ -78,19 +79,19 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 		if (dims_geom != dims_wanted)
 		{
 			/*
-			 * This is safe because the GIDX was created with the maximum number
-			 * of dimension a GIDX can contain
+			 * This is safe to either enlarge or diminush the varsize because
+			 * the GIDX was created with the maximum number of dimension a GIDX
+			 * can contain
 			 */
 			SET_VARSIZE(gidx_geom, VARHDRSZ + dims_wanted * 2 * sizeof(float));
 		}
-		if (dims_geom < dims_wanted)
-			for (i = dims_geom; i < dims_wanted; i++)
-			{
-				GIDX_SET_MIN(gidx_geom, i, 0);
-				GIDX_SET_MAX(gidx_geom, i, 0);
-			}
+		/* zero the extra dimensions if we enlarged the GIDX */
+		for (i = dims_geom; i < dims_wanted; i++)
 		{
+			GIDX_SET_MIN(gidx_geom, i, 0);
+			GIDX_SET_MAX(gidx_geom, i, 0);
 		}
+
 		column->bv_values[INCLUSION_UNION] = datumCopy((Datum) gidx_geom, false,
 				GIDX_SIZE(dims_wanted));
 		column->bv_values[INCLUSION_UNMERGEABLE] = BoolGetDatum(false);
@@ -101,6 +102,10 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 
 	gidx_key = (GIDX *) column->bv_values[INCLUSION_UNION];
 
+	/*
+	 * As we always store a GIDX of the wanted number of dimensions, we just
+	 * need adjust min and max
+	 */
 	for ( i = 0; i < dims_wanted; i++ )
 	{
 		/* Adjust minimums */
