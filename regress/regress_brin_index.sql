@@ -53,14 +53,14 @@ set enable_indexscan = off;
 set enable_bitmapscan = off;
 set enable_seqscan = on;
 
-SELECT 'scan_seq', qnodes('select * from test where the_geom && ST_MakePoint(0,0)');
+SELECT 'scan_seq', qnodes('select * from test where the_geom &&& ST_MakePoint(0,0)');
  select num,ST_astext(the_geom) from test where the_geom &&& 'BOX3D(125 125,135 135)'::box3d order by num;
 
 set enable_indexscan = off;
 set enable_bitmapscan = on;
 set enable_seqscan = off;
 
-SELECT 'scan_idx', qnodes('select * from test where the_geom && ST_MakePoint(0,0)');
+SELECT 'scan_idx', qnodes('select * from test where the_geom &&& ST_MakePoint(0,0)');
  select num,ST_astext(the_geom) from test where the_geom &&& 'BOX3D(125 125,135 135)'::box3d order by num;
 
 DROP INDEX brin_3d;
