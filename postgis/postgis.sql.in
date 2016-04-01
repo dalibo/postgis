@@ -5810,6 +5810,32 @@ ALTER OPERATOR FAMILY brin_geometry_inclusion_family_3d USING brin ADD
 
     OPERATOR      3         &&&(gidx, gidx);
 
+-------------
+-- 4D case --
+-------------
+
+-- Availability: 2.3.0
+CREATE OPERATOR FAMILY brin_geometry_inclusion_family_4d USING brin;
+
+-- Availability: 2.3.0
+CREATE OPERATOR CLASS brin_geometry_inclusion_ops_4d
+  FOR TYPE geometry
+  USING brin
+  FAMILY brin_geometry_inclusion_family_4d AS
+    OPERATOR      3        &&&(geometry, geometry),
+    FUNCTION      1        brin_inclusion_opcinfo(internal) ,
+    FUNCTION      2        geom4d_brin_inclusion_add_value(internal, internal, internal, internal) ,
+    FUNCTION      3        brin_inclusion_consistent(internal, internal, internal) ,
+    FUNCTION      4        brin_inclusion_union(internal, internal, internal) ,
+  STORAGE gidx;
+
+ALTER OPERATOR FAMILY brin_geometry_inclusion_family_4d USING brin ADD
+    OPERATOR      3         &&&(gidx, geometry),
+
+    OPERATOR      3         &&&(geometry, gidx),
+
+    OPERATOR      3         &&&(gidx, gidx);
+
 ---------------------------------------------------------------
 -- END
 ---------------------------------------------------------------
