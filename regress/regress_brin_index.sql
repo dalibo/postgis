@@ -1,5 +1,5 @@
 --- build a larger database
-\i regress_lots_of_points.sql
+--\i regress_lots_of_points.sql
 
 --- test some of the searching capabilities
 
@@ -37,12 +37,24 @@ set enable_seqscan = on;
 SELECT 'scan_seq', qnodes('select * from test where the_geom && ST_MakePoint(0,0)');
  select num,ST_astext(the_geom) from test where the_geom && 'BOX(125 125,135 135)'::box2d order by num;
 
+SELECT 'scan_seq', qnodes('select * from test where ST_MakePoint(0,0) ~ the_geom');
+ select num,ST_astext(the_geom) from test where 'BOX(125 125,135 135)'::box2d ~ the_geom order by num;
+
+SELECT 'scan_seq', qnodes('select * from test where the_geom @ ST_MakePoint(0,0)');
+ select num,ST_astext(the_geom) from test where the_geom @ 'BOX(125 125,135 135)'::box2d order by num;
+
 set enable_indexscan = off;
 set enable_bitmapscan = on;
 set enable_seqscan = off;
 
 SELECT 'scan_idx', qnodes('select * from test where the_geom && ST_MakePoint(0,0)');
  select num,ST_astext(the_geom) from test where the_geom && 'BOX(125 125,135 135)'::box2d order by num;
+
+SELECT 'scan_idx', qnodes('select * from test where ST_MakePoint(0,0) ~ the_geom');
+ select num,ST_astext(the_geom) from test where 'BOX(125 125,135 135)'::box2d ~ the_geom order by num;
+
+SELECT 'scan_idx', qnodes('select * from test where the_geom @ ST_MakePoint(0,0)');
+ select num,ST_astext(the_geom) from test where the_geom @ 'BOX(125 125,135 135)'::box2d order by num;
 
 DROP INDEX brin_2d;
 
