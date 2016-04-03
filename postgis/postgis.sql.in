@@ -5756,8 +5756,6 @@ CREATE OR REPLACE FUNCTION geom4d_brin_inclusion_add_value(internal, internal, i
 	AS 'MODULE_PATHNAME','geom4d_brin_inclusion_add_value'
 	LANGUAGE 'c';
 
-
--- Availability: 2.3.0
 CREATE OPERATOR CLASS brin_geometry_inclusion_ops_2d
   DEFAULT FOR TYPE geometry
   USING brin

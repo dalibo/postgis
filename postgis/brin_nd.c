@@ -14,6 +14,25 @@
 Datum gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum
 		newval, bool isnull, int dims_wanted);
 
+
+/* 
+ * As for the GiST case, geographies are converted into GIDX before
+ * they are added to the other index keys
+ */
+PG_FUNCTION_INFO_V1(geog_brin_inclusion_add_value);
+Datum
+geog_brin_inclusion_add_value(PG_FUNCTION_ARGS)
+{
+        BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
+        BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
+        Datum newval = PG_GETARG_DATUM(2);
+        bool            isnull = PG_GETARG_BOOL(3);
+
+        PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdesc, column, newval, isnull,
+                                2));
+}
+
+
 PG_FUNCTION_INFO_V1(geom3d_brin_inclusion_add_value);
 Datum
 geom3d_brin_inclusion_add_value(PG_FUNCTION_ARGS)

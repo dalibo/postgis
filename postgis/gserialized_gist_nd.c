@@ -972,6 +972,20 @@ Datum gserialized_overlaps(PG_FUNCTION_ARGS)
 }
 
 #if HAVE_BRIN == yes
+/*
+ * This is the cross-operator for the geographies
+ */
+PG_FUNCTION_INFO_V1(gserialized_gidx_geog_overlaps);
+Datum gserialized_gidx_geog_overlaps(PG_FUNCTION_ARGS)
+{
+   GIDX *gidx = (GIDX *)PG_GETARG_POINTER(0);
+
+   if ( gserialized_datum_predicate_gidx_geom(gidx, PG_GETARG_DATUM(1), gidx_overlaps) == LW_TRUE )
+       PG_RETURN_BOOL(TRUE);
+
+   PG_RETURN_BOOL(FALSE);
+}
+
 PG_FUNCTION_INFO_V1(gserialized_gidx_geom_overlaps);
 Datum gserialized_gidx_geom_overlaps(PG_FUNCTION_ARGS)
 {
