@@ -353,7 +353,7 @@ CREATE OR REPLACE FUNCTION geog_brin_inclusion_add_value(internal, internal, int
 -- Availability: 2.3.0
 CREATE OPERATOR CLASS brin_geography_inclusion_ops
   DEFAULT FOR TYPE geography
-  USING brin 
+  USING brin
   FAMILY brin_geography_inclusion_family AS
     OPERATOR      3        &&(geography, geography),
     FUNCTION      1        brin_inclusion_opcinfo(internal) ,
