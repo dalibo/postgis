@@ -15,7 +15,7 @@ Datum gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum
 		newval, bool isnull, int dims_wanted);
 
 
-/* 
+/*
  * As for the GiST case, geographies are converted into GIDX before
  * they are added to the other index keys
  */
