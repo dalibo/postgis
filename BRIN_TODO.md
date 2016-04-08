@@ -11,8 +11,13 @@ them? If we remove them, documentation needs to be updated
 
 Julien: I think they should be kept, since they rely on postgis (GIDX) internal
 
-- check the 3d opclasses
+- Check that ALTER OPERATOR FAMILY is handled by upgrade process
+
+DONE:
 - add 4d opclass
+- check the 3d opclasses
+
+NOT NEEDED
 - add a _nd opclass, and and _nd brin add value function
 
 General
