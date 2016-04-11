@@ -116,7 +116,7 @@ Datum gserialized_overbelow_2d(PG_FUNCTION_ARGS);
 Datum gserialized_distance_box_2d(PG_FUNCTION_ARGS);
 Datum gserialized_distance_centroid_2d(PG_FUNCTION_ARGS);
 
-#if HAVE_BRIN == yes
+#if POSTGIS_PGSQL_VERSION > 94
 Datum gserialized_contains_box2df_geom_2d(PG_FUNCTION_ARGS);
 Datum gserialized_contains_box2df_box2df_2d(PG_FUNCTION_ARGS);
 Datum gserialized_within_box2df_geom_2d(PG_FUNCTION_ARGS);
@@ -630,7 +630,7 @@ gserialized_datum_predicate_2d(Datum gs1, Datum gs2, box2df_predicate predicate)
 	return LW_FALSE;
 }
 
-#if HAVE_BRIN == yes
+#if POSTGIS_PGSQL_VERSION > 94
 static int
 gserialized_datum_predicate_box2df_geom_2d(const BOX2DF *br1, Datum gs2, box2df_predicate predicate)
 {
