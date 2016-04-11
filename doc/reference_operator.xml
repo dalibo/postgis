@@ -136,7 +136,7 @@ FROM ( VALUES
 
 			<programlisting>SELECT ST_MakePoint(1,1) &amp;&amp; ST_MakeBox2D(ST_MakePoint(0,0), ST_MakePoint(2,2)) AS overlaps;
 
- overlaps 
+ overlaps
 ----------
  t
 (1 row)</programlisting>
@@ -202,7 +202,7 @@ FROM ( VALUES
 
 			<programlisting>SELECT ST_MakeBox2D(ST_MakePoint(0,0), ST_MakePoint(2,2)) &amp;&amp; ST_MakePoint(1,1) AS overlaps;
 
- overlaps 
+ overlaps
 ----------
  t
 (1 row)</programlisting>
@@ -268,7 +268,7 @@ FROM ( VALUES
 
 			<programlisting>SELECT ST_MakeBox2D(ST_MakePoint(0,0), ST_MakePoint(2,2)) &amp;&amp; ST_MakeBox2D(ST_MakePoint(1,1), ST_MakePoint(3,3)) AS overlaps;
 
- overlaps 
+ overlaps
 ----------
  t
 (1 row)</programlisting>
@@ -422,7 +422,7 @@ FROM ( VALUES
 
 			<programlisting>SELECT ST_MakePoint(1,1,1) &amp;&amp;&amp; ST_3DMakeBox(ST_MakePoint(0,0,0), ST_MakePoint(2,2,2)) AS overlaps;
 
- overlaps 
+ overlaps
 ----------
  t
 (1 row)</programlisting>
@@ -484,7 +484,7 @@ FROM ( VALUES
 
 			<programlisting>SELECT ST_3DMakeBox(ST_MakePoint(0,0,0), ST_MakePoint(2,2,2)) &amp;&amp;&amp; ST_MakePoint(1,1,1) AS overlaps;
 
- overlaps 
+ overlaps
 ----------
  t
 (1 row)</programlisting>
@@ -546,7 +546,7 @@ FROM ( VALUES
 
 			<programlisting>SELECT ST_3DMakeBox(ST_MakePoint(0,0,0), ST_MakePoint(2,2,2)) &amp;&amp;&amp; ST_3DMakeBox(ST_MakePoint(1,1,1), ST_MakePoint(3,3,3)) AS overlaps;
 
- overlaps 
+ overlaps
 ----------
  t
 (1 row)</programlisting>
@@ -1215,7 +1215,7 @@ FROM
 
 			<programlisting>SELECT ST_Buffer(ST_GeomFromText('POINT(2 2)'), 1) @ ST_MakeBox2D(ST_MakePoint(0,0), ST_MakePoint(5,5)) AS is_contained;
 
- is_contained 
+ is_contained
 --------------
  t
 (1 row)</programlisting>
@@ -1281,7 +1281,7 @@ FROM
 
 			<programlisting>SELECT ST_MakeBox2D(ST_MakePoint(2,2), ST_MakePoint(3,3)) @ ST_Buffer(ST_GeomFromText('POINT(1 1)'), 10) AS is_contained;
 
- is_contained 
+ is_contained
 --------------
  t
 (1 row)</programlisting>
@@ -1347,7 +1347,7 @@ FROM
 
 			<programlisting>SELECT ST_MakeBox2D(ST_MakePoint(2,2), ST_MakePoint(3,3)) @ ST_MakeBox2D(ST_MakePoint(0,0), ST_MakePoint(5,5)) AS is_contained;
 
- is_contained 
+ is_contained
 --------------
  t
 (1 row)</programlisting>
@@ -1619,7 +1619,7 @@ FROM
 
 			<programlisting>SELECT ST_Buffer(ST_GeomFromText('POINT(1 1)'), 10) ~ ST_MakeBox2D(ST_MakePoint(0,0), ST_MakePoint(2,2)) AS contains;
 
- contains 
+ contains
 ----------
  t
 (1 row)</programlisting>
@@ -1685,7 +1685,7 @@ FROM
 
 			<programlisting>SELECT ST_MakeBox2D(ST_MakePoint(0,0), ST_MakePoint(5,5)) ~ ST_Buffer(ST_GeomFromText('POINT(2 2)'), 1) AS contains;
 
- contains 
+ contains
 ----------
  t
 (1 row)</programlisting>
@@ -1751,7 +1751,7 @@ FROM
 
 			<programlisting>SELECT ST_MakeBox2D(ST_MakePoint(0,0), ST_MakePoint(5,5)) ~ ST_MakeBox2D(ST_MakePoint(2,2), ST_MakePoint(3,3)) AS contains;
 
- contains 
+ contains
 ----------
  t
 (1 row)</programlisting>
