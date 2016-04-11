@@ -5545,7 +5545,7 @@ CREATE OR REPLACE FUNCTION ST_InterpolatePoint(Line geometry, Point geometry)
 	AS 'MODULE_PATHNAME', 'ST_InterpolatePoint'
 	LANGUAGE 'c' IMMUTABLE STRICT _PARALLEL;
 
-#if HAVE_BRIN == yes
+#if POSTGIS_PGSQL_VERSION > 94
 --------------------------------------------------------------------
 -- BRIN support                                                   --
 --------------------------------------------------------------------

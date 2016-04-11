@@ -286,7 +286,7 @@ CREATE OPERATOR CLASS gist_geography_ops
 	FUNCTION        6        geography_gist_picksplit (internal, internal),
 	FUNCTION        7        geography_gist_same (box2d, box2d, internal);
 
-#if HAVE_BRIN == yes
+#if POSTGIS_PGSQL_VERSION > 94
 --------------------------------------------------------------------
 -- BRIN support for geographies                                   --
 --------------------------------------------------------------------
