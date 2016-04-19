@@ -20,6 +20,10 @@ geom2d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 	bool		isnull = PG_GETARG_BOOL(3);
 	BOX2DF box_geom, *box_key;
 
+	/*
+	 * If the new value is null, we record that we saw it if it's the first
+	 * one; otherwise, there's nothing to do.
+	 */
 	if (isnull)
 	{
 		if (column->bv_hasnulls)

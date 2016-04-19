@@ -23,13 +23,13 @@ PG_FUNCTION_INFO_V1(geog_brin_inclusion_add_value);
 Datum
 geog_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 {
-        BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
-        BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
-        Datum newval = PG_GETARG_DATUM(2);
-        bool            isnull = PG_GETARG_BOOL(3);
+	BrinDesc   *bdesc = (BrinDesc *) PG_GETARG_POINTER(0);
+	BrinValues *column = (BrinValues *) PG_GETARG_POINTER(1);
+	Datum newval = PG_GETARG_DATUM(2);
+	bool            isnull = PG_GETARG_BOOL(3);
 
-        PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdesc, column, newval, isnull,
-                                2));
+	PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdesc, column, newval, isnull,
+					2));
 }
 
 
@@ -43,7 +43,7 @@ geom3d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 	bool		isnull = PG_GETARG_BOOL(3);
 
 	PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdesc, column, newval, isnull,
-				3));
+					3));
 }
 
 PG_FUNCTION_INFO_V1(geom4d_brin_inclusion_add_value);
@@ -56,7 +56,7 @@ geom4d_brin_inclusion_add_value(PG_FUNCTION_ARGS)
 	bool		isnull = PG_GETARG_BOOL(3);
 
 	PG_RETURN_DATUM(gidx_brin_inclusion_add_value(bdesc, column, newval, isnull,
-				4));
+					4));
 }
 
 Datum
@@ -69,6 +69,10 @@ gidx_brin_inclusion_add_value(BrinDesc *bdesc, BrinValues *column, Datum newval,
 
 	Assert(dims_wanted <= GIDX_MAX_DIM);
 
+	/*
+	 * If the new value is null, we record that we saw it if it's the first
+	 * one; otherwise, there's nothing to do.
+	 */
 	if (isnull)
 	{
 		if (column->bv_hasnulls)
