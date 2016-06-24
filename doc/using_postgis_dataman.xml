@@ -2226,6 +2226,19 @@ SELECT UPDATE_GEOMETRY_STATS([table_name], [column_name]);</programlisting></par
 	  <para>These above syntaxes will use the default number or block in a range, which is 128. To specify the number of blocks you want to summarise in a range, you can create one using this syntax</para>
 	  <para><programlisting>CREATE INDEX [indexname] ON [tablename] USING BRIN ( [geometryfield] ) WITH (pages_per_range = [number]); </programlisting></para>
 
+          <para>Also the "geography" datatype is supported for BRIN indexing. The
+          syntax for building a BRIN index on a "geometry" column is as follows:</para>
+
+          <para><programlisting>CREATE INDEX [indexname] ON [tablename] USING BRIN ( [geographyfield] ); </programlisting></para>
+          <para>The above syntax will always build a 2D-index for geospatial objetcs on the spheroid. </para>
+
+          <para>Currently, just the "inclusion support" is considered here, meaning
+          that just <varname>&amp;&amp;</varname>, <varname>~</varname> and 
+          <varname>@</varname> operators can be used for the 2D cases (both for
+          "geometry" and for "geography"), and just the <varname>&amp;&amp;&amp;</varname>
+          operator can be used for the 3D geometries. There is no support
+          for kNN searches at the moment.</para>
+
 	  <para><programlisting>VACUUM ANALYZE [table_name] [(column_name)];
 -- This is only needed for PostgreSQL 7.4 installations and below
 SELECT UPDATE_GEOMETRY_STATS([table_name], [column_name]);</programlisting></para>
