@@ -16,7 +16,7 @@
 #include "utils/datum.h"
 #include "gserialized_gist.h"
 
-#define INCLUSION_UNION			0
+#define INCLUSION_UNION				0
 #define INCLUSION_UNMERGEABLE		1
 #define INCLUSION_CONTAINS_EMPTY	2
 
