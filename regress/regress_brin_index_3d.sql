@@ -65,7 +65,7 @@ SELECT 'scan_idx', qnodes('SELECT * FROM test WHERE the_geom IS NULL');
 DROP INDEX brin_2d;
 
 -- 3D
-CREATE INDEX brin_3d on test using brin (the_geom using brin_geometry_inclusion_ops_3d) WITH (pages_per_range = 10);
+CREATE INDEX brin_3d on test using brin (the_geom brin_geometry_inclusion_ops_3d) WITH (pages_per_range = 10);
 
 set enable_indexscan = off;
 set enable_bitmapscan = off;
@@ -90,7 +90,7 @@ SELECT 'scan_idx', qnodes('select COUNT(num) FROM test WHERE the_geom IS NULL');
 DROP INDEX brin_3d;
 
 -- 4D
-CREATE INDEX brin_4d on test using brin (the_geom using brin_geometry_inclusion_ops_4d) WITH (pages_per_range = 10);
+CREATE INDEX brin_4d on test using brin (the_geom brin_geometry_inclusion_ops_4d) WITH (pages_per_range = 10);
 
 set enable_indexscan = off;
 set enable_bitmapscan = off;
