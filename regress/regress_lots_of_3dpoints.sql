@@ -7,7 +7,7 @@ INSERT INTO test (num, the_geom)
     SELECT i,
     CASE
         WHEN i%1000 = 0 THEN NULL
-        WHEN i%1100 = 0 THEN 'POLYGON EMPTY'::geometry
+        WHEN i%1100 = 0 THEN 'POINTZ EMPTY'::geometry
     ELSE
         st_makepoint(i::numeric/10, i::numeric/10, i::numeric/10)
     END
